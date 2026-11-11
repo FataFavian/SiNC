@@ -1,5 +1,5 @@
 // =============================================================
-// CncBotWidget.jsx — maskot AI mengambang di pojok kanan bawah.
+// CncBotWidget.jsx - maskot AI mengambang di pojok kanan bawah.
 // Tampil untuk siswa (CNC-Bot - mentor Sokratik) dan guru (CNC-TeacherBot - asisten KBM).
 // Ukuran maskot proporsional mengikuti model AI (bukan lingkaran kaku).
 // =============================================================

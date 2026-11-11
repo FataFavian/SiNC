@@ -71,7 +71,7 @@ export default function AdminHome() {
           )}
         </Card>
 
-        <Card title="Pengguna teratas" icon="spark" subtitle="Siswa dengan rata-rata nilai akhir tertinggi.">
+        <Card title="Pengguna teratas" icon="users" subtitle="Siswa dengan rata-rata nilai akhir tertinggi.">
           <Table
             columns={[
               { key: 'nama', header: 'Siswa', render: (r) => <><b>{r.nama}</b>{r.nis && <div className="dim mono">{r.nis}</div>}</> },

@@ -239,7 +239,7 @@ export default function TaskDetail({ id }) {
         subtitle={`${rows.length} baris pada tab ${tab}. Nilai guru memakai skala poin tugas (${t.poin}); nilai akhir selalu 0-100.`}
         actions={<>
           {hitung.terkumpul > hitung.dinilai && (
-            <Button icon="spark" variant="sec" size="sm" onClick={nilaiOtomatis}>Nilai otomatis</Button>
+            <Button icon="check" variant="sec" size="sm" onClick={nilaiOtomatis}>Nilai otomatis</Button>
           )}
         </>}
       >

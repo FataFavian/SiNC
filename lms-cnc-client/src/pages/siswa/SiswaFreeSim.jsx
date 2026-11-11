@@ -165,7 +165,7 @@ export default function SiswaFreeSim({ programId }) {
           </Row>
         </Card>
 
-        <Card title="Cara memakai simulator" icon="spark">
+        <Card title="Cara memakai simulator" icon="book">
           <ol className="langkah">
             <li>Tulis atau tempel G-Code pada editor. Sintaks yang dikenali: G00, G01, G02, G03, G90, G91.</li>
             <li>Angka X memakai diameter, Z bernilai negatif ke arah lawan chuck. Satu blok bisa memuat beberapa sumbu.</li>

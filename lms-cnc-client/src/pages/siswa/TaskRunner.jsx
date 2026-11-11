@@ -123,7 +123,7 @@ export default function TaskRunner({ id }) {
           )}
         </Card>
 
-        <Card title="Cara mengerjakan" icon="spark">
+        <Card title="Cara mengerjakan" icon="book">
           {t.jenis === 'praktik' ? (
             <ol className="langkah">
               <li>Ikuti bentuk benda pada LKPD, lalu tulis program di editor simulator.</li>

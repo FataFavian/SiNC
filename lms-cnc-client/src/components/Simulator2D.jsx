@@ -1,5 +1,5 @@
 // =============================================================
-// Simulator2D.jsx — viewport 2D yang mengikuti playhead pecahan.
+// Simulator2D.jsx - viewport 2D yang mengikuti playhead pecahan.
 // Menggambar ulang hanya saat posisi berubah, sehingga animasi
 // pahat tetap halus tanpa membebani React.
 // =============================================================

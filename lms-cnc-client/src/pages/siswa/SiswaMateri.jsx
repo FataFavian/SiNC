@@ -1,5 +1,5 @@
 // =============================================================
-// SiswaMateri.jsx — bacaan belajar siswa: pilih rombel, tampilkan
+// SiswaMateri.jsx - bacaan belajar siswa: pilih rombel, tampilkan
 // materi yang guru unggah, dan tautan ke tugas pada rombel yang sama.
 // =============================================================
 import { useMemo, useState } from 'react';

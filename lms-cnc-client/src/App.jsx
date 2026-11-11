@@ -188,7 +188,7 @@ function Shell() {
           <>
             <div className="nav__title">Simulasi</div>
             <a className="nav__item" href="?demo=3d" target="_blank" rel="noreferrer" title="Contoh mesin 3D">
-              <Icon name="spark" size={17} />
+              <Icon name="cube" size={17} />
               <span className="nav__label">Demo mesin 3D</span>
             </a>
           </>

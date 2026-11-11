@@ -1,5 +1,5 @@
 // =============================================================
-// Simulator3D.jsx — viewport 3D untuk simulator bubut.
+// Simulator3D.jsx - viewport 3D untuk simulator bubut.
 // Menerima data simulasi yang sama dengan versi 2D (sim.moves/profile),
 // lalu memotong benda kerja secara inkremental mengikuti playhead.
 // =============================================================

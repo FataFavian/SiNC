@@ -66,7 +66,7 @@ export default function GuruHome() {
           )}
         </Card>
 
-        <Card title="Siswa terbaik" icon="spark" subtitle="Rata-rata nilai akhir tertinggi di seluruh rombel binaan.">
+        <Card title="Siswa terbaik" icon="graduation" subtitle="Rata-rata nilai akhir tertinggi di seluruh rombel binaan.">
           <Table
             loading={s.loading && !s.data}
             rows={d.teratas || []}

@@ -1,5 +1,5 @@
 // =============================================================
-// ControlPanel2D.jsx — tampilan "zoom in" panel kontrol saat mengedit.
+// ControlPanel2D.jsx - tampilan "zoom in" panel kontrol saat mengedit.
 // Panel ini menutupi viewport 3D; saat animasi berjalan ia mengecil
 // dan kamera 3D melakukan zoom-out ke seluruh mesin.
 // =============================================================

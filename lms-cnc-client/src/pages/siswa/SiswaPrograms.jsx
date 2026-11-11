@@ -1,5 +1,5 @@
 // =============================================================
-// SiswaPrograms.jsx — lemari program G-Code milik siswa.
+// SiswaPrograms.jsx - lemari program G-Code milik siswa.
 // Disimpan dari simulator, bisa dimuat ulang, disunting, dihapus.
 // =============================================================
 import { useMemo, useState } from 'react';
