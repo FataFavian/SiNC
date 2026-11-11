@@ -125,31 +125,33 @@ export default function Login() {
             {mode === 'login' ? 'Masuk' : 'Buat akun'}
           </Button>
 
-          <div className="auth-card__demo-divider" style={{ borderTop: '1px solid var(--border)', margin: '20px 0 16px', position: 'relative', textAlign: 'center' }}>
-            <span style={{ position: 'relative', top: -10, background: 'var(--surface, #1e293b)', padding: '0 12px', fontSize: 12, color: 'var(--text-dim, #94a3b8)' }}>
+          <div className="auth-card__demo-divider" style={{ borderTop: '1px solid rgba(245, 238, 226, 0.16)', margin: '14px 0 10px', position: 'relative', textAlign: 'center' }}>
+            <span style={{ position: 'relative', top: -9, background: 'rgba(17, 26, 45, 0.95)', padding: '0 10px', fontSize: 11.5, color: 'var(--muted)' }}>
               atau coba tanpa akun
             </span>
           </div>
 
           <div style={{ textAlign: 'center' }}>
             <a
-              className="btn btn--outline btn--block"
+              className="btn btn--block"
               href="?demo=3d"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 8,
-                padding: '10px 16px',
-                borderRadius: 8,
-                fontSize: 13,
+                gap: 7,
+                padding: '8px 14px',
+                borderRadius: 9,
+                fontSize: 12.5,
                 fontWeight: 600,
                 textDecoration: 'none',
-                color: 'var(--accent, #38bdf8)',
-                border: '1px solid var(--accent, #38bdf8)'
+                color: 'var(--text-strong, #fffdf8)',
+                background: 'rgba(245, 238, 226, 0.08)',
+                border: '1px solid rgba(245, 238, 226, 0.24)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
               }}
             >
-              <Icon name="cube" size={16} />
+              <Icon name="cube" size={15} style={{ color: 'var(--muted)' }} />
               Coba Simulator Mesin 3D (Demo Langsung)
             </a>
           </div>
