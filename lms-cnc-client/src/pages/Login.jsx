@@ -5,9 +5,10 @@
 import { useState } from 'react';
 import { navigate } from '../router';
 import { useSession } from '../session';
+import { useTheme } from '../theme.jsx';
 import Icon from '../ui/Icon.jsx';
 import sincLogo from '../assets/sinc-logo.png';
-import { Alert, Button, Field, Input } from '../ui/primitives.jsx';
+import { Alert, Button, Field, IconButton, Input } from '../ui/primitives.jsx';
 
 const DEMO = [
   ['Administrator', 'admin@smk.sch.id'],
@@ -24,6 +25,7 @@ const VALUE = [
 
 export default function Login() {
   const { login, daftar } = useSession();
+  const { theme, toggleTheme } = useTheme();
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ nama: '', email: '', password: '', kelas: '', kode: '' });
   const [err, setErr] = useState('');
@@ -56,10 +58,17 @@ export default function Login() {
           <span className="auth__mark" style={{ background: 'transparent', padding: 0, overflow: 'hidden' }}>
             <img src={sincLogo} alt="SiNC" style={{ width: 44, height: 44, borderRadius: 12, display: 'block' }} />
           </span>
-          <div>
+          <div style={{ flex: 1 }}>
             <b style={{ fontSize: 18, letterSpacing: '-0.01em' }}>S<span style={{ color: 'var(--accent)' }}>i</span>NC</b>
             <div className="dim" style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase' }}>Simulator CNC</div>
           </div>
+          <IconButton
+            name={theme === 'light' ? 'moon' : 'sun'}
+            title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
+            variant="sec"
+            size="sm"
+            onClick={toggleTheme}
+          />
         </div>
 
         <h2>Belajar pemrograman bubut CNC sampai benar-benar terampil</h2>

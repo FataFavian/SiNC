@@ -6,6 +6,7 @@ import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { Link, navigate, parse, useRoute } from './router';
 import { SessionProvider, useSession } from './session';
+import { ThemeProvider, useTheme } from './theme.jsx';
 import Icon from './ui/Icon.jsx';
 import { ConfirmHost, IconButton, Spinner, Toaster } from './ui/primitives.jsx';
 import { inisial, useAsync } from './ui/hooks.jsx';
@@ -132,6 +133,7 @@ function Outlet({ segments, role, queryParams }) {
 
 function Shell() {
   const { user, keluar } = useSession();
+  const { theme, toggleTheme } = useTheme();
   const route = useRoute();
   const { segments, query } = useMemo(() => parse(route), [route]);
   const [drawer, setDrawer] = useState(false);
@@ -206,6 +208,13 @@ function Shell() {
         <div className="u-row">
           <IconButton name="settings" title="Profil saya" variant="sec" size="sm" onClick={() => navigate('/profil')} />
           <IconButton name="logout" title="Keluar" variant="sec" size="sm" onClick={keluar} />
+          <IconButton
+            name={theme === 'light' ? 'moon' : 'sun'}
+            title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
+            variant="sec"
+            size="sm"
+            onClick={toggleTheme}
+          />
           <span className="spacer" />
           <IconButton name={min ? 'chevron-right' : 'chevron-left'} title={min ? 'Buka menu' : 'Ringkas menu'} size="sm" onClick={() => setMin(!min)} />
         </div>
@@ -232,6 +241,13 @@ function Shell() {
               <Link className="chip chip--accent" to="/guru/tugas">{counts.menunggu} perlu dinilai</Link>
             )}
             <span className={`role-tag role-tag--${role}`}>{role}</span>
+            <IconButton
+              name={theme === 'light' ? 'moon' : 'sun'}
+              title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
+              variant="sec"
+              size="sm"
+              onClick={toggleTheme}
+            />
           </div>
         </header>
         <main className="content">
@@ -261,14 +277,18 @@ export default function App() {
   const demo = new URLSearchParams(window.location.search).get('demo');
   if (demo === '3d') {
     return (
-      <Suspense fallback={<div className="demo-load"><Spinner size={18} /> Memuat simulator 3D…</div>}>
-        <Cnc3DExample />
-      </Suspense>
+      <ThemeProvider>
+        <Suspense fallback={<div className="demo-load"><Spinner size={18} /> Memuat simulator 3D…</div>}>
+          <Cnc3DExample />
+        </Suspense>
+      </ThemeProvider>
     );
   }
   return (
-    <SessionProvider>
-      <Gate />
-    </SessionProvider>
+    <ThemeProvider>
+      <SessionProvider>
+        <Gate />
+      </SessionProvider>
+    </ThemeProvider>
   );
 }

@@ -93,7 +93,11 @@ export function Grid({ cols = 2, children, className, min, style }) {
 export function Stat({ label, value, hint, icon, tone }) {
   return (
     <div className={cx('stat', tone && `stat--${tone}`)}>
-      {icon && <Icon name={icon} size={24} className="stat__icon" />}
+      {icon && (
+        <span className="stat__icon-box">
+          <Icon name={icon} size={22} />
+        </span>
+      )}
       <div className="stat__text">
         <b>{value}</b>
         <span>{label}</span>
