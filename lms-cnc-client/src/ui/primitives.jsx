@@ -43,7 +43,7 @@ export function Card({ title, subtitle, actions, icon, tone, children, className
       {(title || actions) && (
         <header className="card__head">
           <div className="card__title">
-            {icon && <span className="card__icon"><Icon name={icon} size={17} /></span>}
+            {icon && <Icon name={icon} size={18} className="card__icon" />}
             <div>
               <h3>{title}</h3>
               {subtitle && <p className="dim">{subtitle}</p>}
@@ -93,11 +93,7 @@ export function Grid({ cols = 2, children, className, min, style }) {
 export function Stat({ label, value, hint, icon, tone }) {
   return (
     <div className={cx('stat', tone && `stat--${tone}`)}>
-      {icon && (
-        <span className="stat__icon">
-          <Icon name={icon} size={20} />
-        </span>
-      )}
+      {icon && <Icon name={icon} size={24} className="stat__icon" />}
       <div className="stat__text">
         <b>{value}</b>
         <span>{label}</span>
@@ -225,7 +221,7 @@ export function Alert({ tone = 'info', title, children, icon, action }) {
 export function EmptyState({ icon = 'box', title, desc, action }) {
   return (
     <div className="empty">
-      <span className="empty__icon"><Icon name={icon} size={24} /></span>
+      <Icon name={icon} size={32} className="empty__icon" />
       <b>{title}</b>
       {desc && <p className="dim">{desc}</p>}
       {action && <div className="empty__action">{action}</div>}
