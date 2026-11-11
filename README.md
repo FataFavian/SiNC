@@ -18,300 +18,282 @@
 
 ## 1. Tentang SiNC
 
-**SiNC (Simulator CNC)** adalah platform Learning Management System (LMS) yang mengintegrasikan simulator bubut CNC dengan aktivitas pembelajaran. Aplikasi ini ditujukan sebagai media pendukung pembelajaran pemrograman CNC, khususnya pengenalan dan latihan G-Code bubut.
+**SiNC (Simulator CNC)** adalah platform Learning Management System (LMS) terpadu yang mengintegrasikan simulator bubut CNC interaktif dengan aktivitas pembelajaran vokasi. Aplikasi ini dirancang sebagai jembatan praktis dalam pembelajaran pemrograman CNC, khususnya pengenalan, perancangan, dan verifikasi kode G-Code mesin bubut.
 
-Dalam pembelajaran konvensional, pemahaman lintasan pahat, koordinat, dan hasil pembubutan dapat sulit dibayangkan apabila siswa hanya mempelajari kode melalui teks atau gambar dua dimensi. SiNC menghadirkan simulasi visual agar siswa dapat mengamati pergerakan pahat dan perubahan profil benda kerja sebelum menginterpretasikan hasil program.
+SiNC dikembangkan dalam rangka kompetisi **LOGICODIX 2026** dengan subtema **Smart & Fun Education**, berfokus pada penghapusan sekat antara teori di buku teks dan praktik nyata di bengkel permesinan.
 
-SiNC dikembangkan dalam konteks **pendidikan (Smart & Fun Education)**. Fokus MVP adalah menghubungkan materi, latihan, simulasi, umpan balik, dan penilaian dalam satu alur pembelajaran.
+---
 
-## 2. Permasalahan dan Solusi
+## 2. Latar Belakang dan Permasalahan
 
-### Permasalahan
+### Latar Belakang Empiris
+Gagasan pengembangan SiNC berakar langsung dari pengalaman empiris tim saat menempuh pendidikan di **SMK Jurusan Teknik Pemesinan**. Pada pembelajaran mesin bubut CNC konvensional, sekolah kerap menghadapi keterbatasan sarana fasilitas fisik yang nyata:
+- **Kesenjangan Rasio Fasilitas**: Di bengkel sekolah, umumnya hanya tersedia **2 unit mesin bubut CNC fisik untuk melayani sekitar 30 siswa** dalam satu rombongan belajar.
+- **Minimnya Waktu Praktik Per Siswa**: Siswa harus bergiliran dengan alokasi waktu yang sangat terbatas. Akibatnya, pembelajaran lebih banyak didominasi teori hafalan dari buku teks tanpa kesempatan eksperimen mandiri.
+- **Tingginya Hambatan Psikologis & Biaya**: Pemula sering merasa cemas saat memprogram mesin asli karena kekhawatiran risiko tabrakan (*crash*) pahat yang dapat merusak mesin bernilai ratusan juta rupiah serta membuang-buang benda kerja logam (*raw material*).
 
-- G-Code memiliki sintaks dan sistem koordinat yang perlu dipahami secara bertahap.
-- Hubungan antara baris program, gerakan pahat, dan bentuk akhir benda kerja tidak selalu mudah divisualisasikan.
-- Latihan pemrograman perlu disertai umpan balik agar siswa dapat mengetahui kesalahan dasar dan memperbaiki programnya.
-- Guru membutuhkan sarana untuk membagikan materi, membuat tugas, serta memantau hasil latihan siswa.
+### Permasalahan yang Dihadapi
+1. Sintaks G-Code dan sistem koordinat kartesius (sumbu X dan Z) bersifat abstrak dan sulit dibayangkan tanpa umpan balik visual seketika.
+2. Tidak tersedianya media simulasi yang terintegrasi langsung dengan platform tugas dan penilaian guru dalam satu pintu.
+3. Keterbatasan akses siswa untuk berlatih mandiri di luar jam operasional bengkel sekolah.
 
-### Solusi yang ditawarkan
+### Solusi yang Ditawarkan
+SiNC menghadirkan satu ekosistem terpadu: **LMS + Simulator CNC**. Siswa dapat menulis program pada panel kontrol 2D, lalu saat siklus pemotongan dijalankan, antarmuka bertransisi mulus (*cinematic zoom-out*) memperlihatkan mesin bubut 3D yang memotong benda kerja secara real-time. Siswa mendapatkan pemahaman spasial yang konkret tanpa risiko kerusakan fisik, dan guru dapat memantau penugasan serta rekap nilai secara otomatis.
 
-SiNC menggabungkan satu simulator CNC dengan LMS. Tampilan panel kontrol 2D digunakan ketika siswa menyusun atau mengedit G-Code. Ketika program dijalankan, tampilan bertransisi melalui kamera zoom-out menuju visualisasi mesin bubut 3D. Keduanya bukan dua simulator atau pilihan mode yang terpisah, melainkan dua tampilan dalam satu rangkaian simulasi dan menggunakan data gerakan program yang sama. Siswa kemudian dapat melihat hasil simulasi dan mengirimkan latihan. Guru dapat mengelola kelas, materi, tugas, dan penilaian melalui aplikasi yang sama.
+---
 
-## 3. Fitur Utama MVP
+## 3. Relevansi dengan Sustainable Development Goals (SDGs)
 
-| Fitur | Deskripsi |
-|---|---|
-| Simulator bubut CNC terintegrasi | Satu alur simulasi: siswa menulis dan memeriksa G-Code melalui panel kontrol 2D, lalu saat siklus dijalankan kamera melakukan transisi zoom-out untuk memperlihatkan mesin bubut 3D yang mengeksekusi program. |
-| Interpretasi G-Code | Mesin simulasi mendukung perintah dasar `G00`, `G01`, `G02`, `G03`, `G90`, dan `G91`. |
-| Deteksi kejadian simulasi | Menampilkan informasi kondisi seperti peringatan, kesalahan lintasan, dan indikasi tabrakan yang dimodelkan oleh simulator. |
-| LMS berbasis peran | Memisahkan pengalaman pengguna Admin, Guru, dan Siswa. |
-| Manajemen kelas | Guru dapat membuat kelas dan mengelola keanggotaan siswa. |
-| Materi pembelajaran | Guru dapat mengelola materi dan berkas pendukung pembelajaran. |
-| Tugas dan latihan | Guru dapat menyusun tugas; siswa dapat mengerjakan dan mengirimkan program G-Code. |
-| Penilaian | Sistem menyimpan hasil percobaan dan mendukung penilaian guru serta rekap nilai. |
-| AI Tutor | Memberikan umpan balik pembelajaran terkait G-Code. Pemeriksaan dasar tetap dapat berjalan secara otomatis; respons LLM tersedia jika konfigurasi layanan AI diisi. |
+Sejalan dengan tema besar *NextGen Digital Innovation: Crafting Creative Solutions for a Better Society*, SiNC memberikan kontribusi nyata terhadap target pembangunan berkelanjutan:
 
-> **Batasan simulasi:** SiNC merupakan media pembelajaran dan simulasi perangkat lunak. Hasil simulasi tidak boleh dianggap sebagai pengganti verifikasi program, prosedur keselamatan, atau pengujian pada mesin CNC nyata oleh instruktur yang kompeten.
+| Tujuan SDG | Target Relevan | Kontribusi Nyata SiNC |
+|---|---|---|
+| **SDG 4: Quality Education** | **Target 4.4** (Peningkatan Keterampilan Vokasi & Kesiapan Kerja) | Mendemokratisasi akses pelatihan CNC berkualitas bagi seluruh siswa SMK tanpa terkendala keterbatasan jumlah mesin fisik sekolah. |
+| **SDG 9: Industry, Innovation, and Infrastructure** | **Target 9.2 & 9.4** (Modernisasi Industri & Keterampilan Manufaktur) | Mempersiapkan talenta muda operator dan programmer mesin presisi untuk menyongsong era *Industry 4.0* dan *Smart Manufacturing*. |
+| **SDG 12: Responsible Consumption and Production** | **Target 12.2 & 12.5** (Pencegahan Limbah & Efisiensi Energi) | Pembelajaran ramah lingkungan (*Green Education*): menghemat bahan baku logam mentah, meniadakan limbah gram saat tahap awal latihan, dan menghemat konsumsi energi listrik bengkel. |
 
-## 4. Alur Penggunaan
+---
 
-1. **Admin** mengelola akun dan data pengguna.
-2. **Guru** membuat kelas, membagikan materi, dan menyusun tugas latihan.
-3. **Siswa** bergabung ke kelas, mempelajari materi, dan membuka simulator.
-4. **Siswa menyusun G-Code** melalui editor yang terintegrasi dengan panel kontrol CNC 2D.
-5. **Sistem memproses G-Code** menjadi data gerakan pahat, lintasan, dan profil benda kerja.
-6. **Siswa menjalankan siklus.** Kamera bergerak zoom-out dari panel kontrol sehingga mesin bubut 3D terlihat dan proses pemotongan divisualisasikan sampai program selesai atau terjadi kondisi alarm.
-7. **Sistem menampilkan hasil** berupa status simulasi, informasi kesalahan/peringatan, dan skor sesuai aturan penilaian yang diterapkan.
-8. **Siswa mengirimkan pekerjaan** untuk dinilai, kemudian **guru** memeriksa hasil, memberikan catatan, dan memantau rekap pembelajaran.
+## 4. Metodologi Pengembangan (SDLC)
 
-### Satu simulator, dua tampilan yang berurutan
-
-Panel 2D dan mesin 3D bukan dua mode simulator yang berdiri sendiri. Panel 2D merupakan tampilan saat pengguna menyusun atau mengedit program. Ketika siklus dijalankan, antarmuka bertransisi ke tampilan mesin 3D. Data hasil pemrosesan G-Code dan posisi playback yang sama menjadi acuan visualisasi, sehingga gerakan pahat pada mesin 3D merepresentasikan program yang sedang dijalankan.
+SiNC dikembangkan menggunakan metodologi **Agile Prototyping Model (Iterative Development)**, yang memungkinkan pengujian dan penyempurnaan fitur secara berkelanjutan:
 
 ```mermaid
 flowchart LR
-    A[Edit / Input G-Code] --> B[Panel Kontrol 2D]
-    B --> C[Parse dan Validasi G-Code]
-    C --> D[Data Gerakan dan Toolpath]
-    D --> E[Transisi Kamera: Zoom-out]
-    E --> F[Mesin Bubut 3D Menjalankan Program]
-    F --> G{Program selesai atau alarm?}
-    G -->|Selesai| H[Hasil Simulasi dan Skor]
-    G -->|Alarm| I[Informasi Kesalahan]
-    H --> J[Kembali ke Panel untuk Edit]
-    I --> J
-    J --> A
+    A[1. Analisis Kebutuhan Empiris SMK] --> B[2. Rapid Prototype 2D & G-Code Engine]
+    B --> C[3. Evolusi Simulator Mesin 3D]
+    C --> D[4. Integrasi LMS & AI Tutor]
+    D --> E[5. Pengujian & Deployment]
 ```
 
-## 5. Dokumentasi Visual
+1. **Analisis Kebutuhan Empiris (Empirical Analysis)**: Pengumpulan masalah nyata pembelajaran bubut CNC di SMK (rasio mesin 2:30 siswa, kesulitan koordinat X/Z).
+2. **Rapid Prototyping (PoC 2D)**: Membangun purwarupa awal berupa panel kontrol 2D dan *parser G-Code* untuk memverifikasi validitas logika pergerakan pahat sebelum pemodelan kompleks.
+3. **Evolusi Simulasi 3D (Spatial Evolution)**: Mentransformasikan engine simulasi ke representasi visual mesin 3D interaktif menggunakan **Three.js**, mencakup eretan, kepala lepas (*tailstock*), pencekam (*chuck*), cairan pendingin (*coolant*), dan serpihan geram (*sparks*).
+4. **Integrasi Ekosistem LMS & AI (System Integration)**: Mengintegrasikan peran pengguna (Admin, Guru, Siswa), modul materi, tugas praktik, evaluasi otomatis, serta asisten cerdas **AI Tutor** untuk memberikan panduan perbaikan sintaks.
+5. **Pengujian & Deployment (Testing & Release)**: Pengujian unit logika mesin (`test-engine.php`), penyederhanaan akses login manual & demo instan, serta penyiapan deployment cPanel.
+
+---
+
+## 5. Fitur Utama MVP
+
+| Fitur | Deskripsi |
+|---|---|
+| Simulator CNC Terintegrasi | Satu alur simulasi berkesinambungan: menyusun G-Code pada panel kontrol 2D, lalu saat tombol *Cycle Start* ditekan, kamera bertransisi *zoom-out* memperlihatkan mesin bubut 3D yang mengeksekusi program. |
+| Interpretasi Perintah G-Code | Mendukung perintah dasar permesinan bubut: `G00` (rapid positioning), `G01` (linear feed), `G02` & `G03` (circular interpolation), serta mode koordinat `G90` (absolut) dan `G91` (inkremental). |
+| Deteksi Alarm & Pencegahan Crash | Mendeteksi tabrakan pahat dengan material mentah atau rahang chuck saat gerak cepat (`G00`), serta menghentikan siklus seketika disertai diagnosa kesalahan. |
+| LMS Berbasis Peran | Memisahkan hak akses dan fungsionalitas antara **Admin**, **Guru**, dan **Siswa**. |
+| Manajemen Kelas & Penugasan | Guru dapat membuat rombel kelas, membagikan kode gabung, menyusun tugas pemrograman, dan menerbitkan kuis teori. |
+| Evaluasi Otomatis & Rekap Nilai | Sistem menilai hasil simulasi program siswa secara otomatis (0-100) dan guru dapat memberikan catatan serta mengunduh rekap nilai. |
+| AI Tutor Pendamping | Menyediakan asistensi pembelajaran interaktif untuk membimbing siswa saat menemukan galat (*error*) sintaks atau logika pada program G-Code. |
+
+---
+
+## 6. Alur Penggunaan
+
+```mermaid
+flowchart LR
+    A[Input / Edit G-Code] --> B[Panel Kontrol 2D]
+    B --> C[Validasi Sintaks & Toolpath]
+    C --> D[Transisi Kamera: Zoom-out]
+    D --> E[Mesin Bubut 3D Mengeksekusi]
+    E --> F{Status Siklus?}
+    F -->|Selesai Sukses| G[Skor & Visual Profil Benda Kerja]
+    F -->|Kondisi Alarm| H[Diagnosa Tabrakan / Galat]
+    G --> I[Kirim Tugas ke Guru / Kembali ke Edit]
+    H --> I
+```
+
+---
+
+## 7. Desain & Dokumentasi Visual
 
 ### Acuan dan Referensi Perancangan Mesin & Kontroler
 
-Proses perancangan tata letak tombol operasi, kinematika mesin, dan visual kabin didasarkan pada referensi mesin bubut CNC industri nyata:
+Perancangan tata letak tombol operasi, kinematika mesin, dan estetika visual didasarkan pada referensi mesin bubut CNC industri nyata:
 
-| Objek | Berkas Referensi | Keterangan |
+| Komponen | Berkas Referensi | Sumber Acuan & Deskripsi |
 |---|---|---|
-| **Panel Kontrol 2D** | [referensi control panel cnc.jpeg](docs/images/references/referensi%20control%20panel%20cnc.jpeg) | Acuan tata letak tombol operasi, cycle start, emergency stop, dan dial feedrate. |
-| **Mesin Bubut 3D** | [referensi mesin cnc gremat sth6166.webp](docs/images/references/referensi%20mesin%20cnc%20gremat%20sth6166.webp) | Acuan pemodelan 3D mesin bubut CNC Gremat STH6166 (spindle, bed, turret, tailstock). |
+| **Panel Kontrol 2D** | [referensi control panel cnc.jpeg](docs/images/references/referensi%20control%20panel%20cnc.jpeg) | Tata letak standar industri: tombol mode (EDIT, AUTO, JOG, MDI), cycle start/stop, feedrate override, dan koordinat digital X/Z. |
+| **Mesin Bubut 3D** | [referensi mesin cnc gremat sth6166.webp](docs/images/references/referensi%20mesin%20cnc%20gremat%20sth6166.webp) | Pemodelan 3D mesin bubut CNC **Gremat STH6166** (mesin yang digunakan pada bengkel SMK acuan). Mencakup headstock, bed, carriage, tool turret, dan kabin pelindung. |
 
-Detail catatan atribusi dapat dilihat pada [docs/images/references/references.md](docs/images/references/references.md).
+Detail dokumentasi dan atribusi lengkap tersedia pada berkas [docs/images/references/references.md](docs/images/references/references.md).
 
-*(Tangkapan layar antarmuka aplikasi terbaru dan diagram alur sistem web dapat diperbarui pada direktori `docs/images/screenshots/` dan `docs/images/diagrams/`).*
+### Konsep Desain Antarmuka (*Liquid Glass Aesthetics*)
+Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi palet warna terukur:
+- **60% Navy Deep**: Memberikan fokus visual, kontras tinggi, dan kenyamanan ergonomis di layar kerja (*dark workspace*).
+- **30% Cream Slate**: Sebagai bidang kontainer panel kontrol, tipografi sekunder, dan pembatas konten yang lembut.
+- **10% Coral Accent**: Menyorot elemen aksi utama (*Call to Action*), indikator status aktif mesin, dan tombol darurat.
 
-## 6. Teknologi
+---
 
-| Bagian | Teknologi |
-|---|---|
-| Frontend | React 18, JavaScript, HTML, CSS |
-| Build tool | Vite |
-| Visualisasi 3D | Three.js |
-| Backend | PHP Native |
-| Database | MySQL |
-| API | REST-style JSON API |
-| Autentikasi | Token Bearer/JWT dengan konfigurasi secret melalui environment variable |
-| AI Tutor | Integrasi endpoint LLM yang kompatibel dengan format API OpenAI; bersifat opsional melalui konfigurasi |
+## 8. Teknologi
 
-## 7. Arsitektur Sistem
+| Bagian | Teknologi | Keterangan |
+|---|---|---|
+| Frontend | React 18, JavaScript (ES6+), HTML5, CSS3 | Antarmuka pengguna dan state management |
+| Build Tool | Vite | Bundling cepat dan Hot Module Replacement (HMR) |
+| Visualisasi 3D | Three.js | Grafika WebGL mesin bubut, partikel geram, dan cairan pendingin |
+| Backend | PHP Native (PHP 8.1+) | REST API modular, autentikasi JWT token |
+| Database | MySQL / MariaDB | Penyimpanan relasional (11 tabel) |
+| AI Tutor | Integrasi API LLM (OpenAI-compatible) | Layanan opsional untuk asistensi cerdas |
+
+---
+
+## 9. Arsitektur Sistem
 
 ```mermaid
 flowchart TD
     A[Pengguna: Admin / Guru / Siswa] --> B[Frontend React + Vite]
     B --> C[Simulator CNC Terintegrasi]
-    C --> D[Editor G-Code dan Panel Kontrol 2D]
-    D --> E[Parser / Pemroses G-Code]
-    E --> F[Data Gerakan, Toolpath, dan Playhead]
-    F --> G[Visualisasi Mesin Bubut 3D - Three.js]
-    F --> H[Hasil Simulasi dan Skor]
-    B --> I[HTTP API]
-    I --> J[Backend PHP]
-    J --> K[Modul LMS dan Autentikasi]
-    J --> L[Penilaian G-Code]
-    J --> M[AI Tutor]
-    K --> N[(Database MySQL)]
-    L --> N
-    M --> O[LLM API Opsional]
+    C --> D[Editor G-Code & Panel 2D]
+    D --> E[Parser G-Code & Kinematika]
+    E --> F[Panggung Simulasi Mesin 3D - Three.js]
+    B --> G[RESTful HTTP API]
+    G --> H[Backend PHP Engine]
+    H --> I[Modul LMS & Autentikasi]
+    H --> J[Mesin Penilaian Otomatis]
+    H --> K[Modul AI Tutor]
+    I --> L[(Database MySQL)]
+    J --> L
+    K --> M[Layanan Eksternal LLM]
 ```
 
-Frontend mengelola alur interaksi dan satu pengalaman simulator. Panel kontrol 2D digunakan pada tahap penyusunan program; saat siklus dijalankan, kamera bertransisi untuk menampilkan mesin 3D. Kedua tampilan mengikuti hasil pemrosesan G-Code dan posisi playback yang sama, bukan menjalankan dua mesin simulasi terpisah. Backend PHP menyediakan endpoint autentikasi, pengelolaan LMS, penyimpanan hasil, penilaian, dan AI Tutor. Data aplikasi disimpan pada MySQL. Integrasi LLM bersifat opsional dan memerlukan konfigurasi kredensial pada server.
+---
 
-## 8. Struktur Direktori
+## 10. Struktur Direktori
 
 ```text
 SiNC/
 ├── backend-php/                  # Backend API berbasis PHP
-│   ├── lib/                      # Logika inti aplikasi
-│   │   ├── AITutor.php           # Umpan balik dan integrasi AI Tutor
-│   │   ├── GCode.php             # Parser dan mesin simulasi G-Code
-│   │   └── Lms.php               # Fungsi pendukung LMS
-│   ├── routes/                   # Endpoint API per fitur
-│   ├── tests/                    # Pengujian backend dan API
-│   ├── uploads/                  # Penyimpanan berkas yang diunggah
+│   ├── lib/                      # Logika inti aplikasi (GCode, Lms, AITutor)
+│   ├── routes/                   # Endpoint modular per entitas (auth, kelas, tugas, dll.)
+│   ├── tests/                    # Skrip pengujian otomatis backend
+│   ├── uploads/                  # Media dan berkas materi pembelajaran
 │   ├── api.php                   # Front controller API
-│   ├── config.php                # Konfigurasi aplikasi
-│   ├── database.sql              # Skema dan data awal database
-│   └── .env.example              # Contoh variabel environment
+│   ├── config.php                # Konfigurasi aplikasi & koneksi database
+│   ├── database.sql              # Skema awal database
+│   └── .env.example              # Contoh variabel lingkungan
 │
-├── lms-cnc-client/               # Frontend React + Vite
-│   ├── public/                   # Aset publik (jika digunakan)
+├── lms-cnc-client/               # Frontend aplikasi React + Vite
 │   ├── src/
-│   │   ├── assets/               # Logo dan aset visual frontend
-│   │   ├── components/           # Komponen simulator dan UI
-│   │   ├── examples/             # Contoh implementasi
-│   │   ├── pages/                # Halaman Admin, Guru, Siswa, dan bersama
-│   │   ├── three/                # Scene, mesin, pahat, benda kerja, toolpath
-│   │   ├── ui/                   # Komponen UI dasar dan hooks
-│   │   ├── api.js                # Komunikasi frontend dengan backend
-│   │   ├── App.jsx               # Komponen aplikasi utama
-│   │   ├── router.jsx            # Konfigurasi routing
-│   │   └── styles.css            # Style global
+│   │   ├── assets/               # Logo, maskot AI, dan ikon grafis
+│   │   ├── components/           # Komponen kontroler 2D, simulator 3D, dan bot widget
+│   │   ├── pages/                # Halaman berbasis peran (Admin, Guru, Siswa, Profil)
+│   │   ├── three/                # Scene 3D, kinematika mesin, coolant, sparks, workpiece
+│   │   ├── ui/                   # Komponen primitif sistem desain (Button, Modal, Input)
+│   │   ├── api.js                # Klien HTTP komunikasi backend
+│   │   ├── App.jsx               # Komponen routing dan layout utama
+│   │   └── styles.css            # Desain global liquid glass
 │   ├── index.html
 │   ├── package.json
-│   ├── vite.config.js
-│   └── .env.example
+│   └── vite.config.js
 │
 ├── docs/                         # Dokumentasi teknis dan visual
-│   ├── API-LMS.md                # Dokumentasi endpoint API
+│   ├── API-LMS.md                # Spesifikasi lengkap endpoint REST API
 │   ├── images/
-│   │   ├── screenshots/          # Tampilan aplikasi saat berjalan
-│   │   ├── diagrams/             # Diagram arsitektur, alur, UML, dan ERD
-│   │   └── references/           # Gambar referensi desain beserta atribusi
+│   │   ├── screenshots/          # Tangkapan layar antarmuka aplikasi
+│   │   ├── diagrams/             # Diagram arsitektur dan alur sistem
+│   │   └── references/           # Gambar referensi mesin fisik & kontroler
 │   │       ├── referensi control panel cnc.jpeg
 │   │       ├── referensi mesin cnc gremat sth6166.webp
-│   │       └── references.md
+│   │       └── references.md     # Dokumen atribusi dan sumber referensi
 │
-├── deploy/                       # Script dan panduan deployment
-│   ├── build-cpanel.sh
-│   ├── public_html.htaccess
-│   ├── README.md
-│   └── sql/                      # Script migrasi database
-│
+├── deploy/                       # Skrip build dan petunjuk deployment cPanel
 ├── .gitignore
 └── README.md                     # Dokumentasi utama proyek
 ```
 
-> Direktori `node_modules/`, `dist/`, `.git/`, dan hasil build/deployment seperti `cPanel/` tidak perlu dicantumkan sebagai source utama. Jangan mengunggah kredensial atau hasil build yang berisi konfigurasi rahasia.
+---
 
-## 9. Menjalankan Aplikasi secara Lokal
+## 11. Menjalankan Aplikasi secara Lokal
 
 ### Prasyarat
+- PHP 8.1 atau lebih baru (dengan ekstensi `pdo_mysql`)
+- MySQL atau MariaDB
+- Node.js (v18+) dan npm
+- Browser modern dengan dukungan WebGL
 
-- PHP 8.1 atau lebih baru dengan ekstensi PDO MySQL.
-- MySQL atau MariaDB.
-- Node.js dan npm.
-- Browser modern.
+### Langkah Instalasi
 
-### 9.1 Clone repository
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/FataFavian/SiNC.git
+   cd SiNC
+   ```
 
-```bash
-git clone https://github.com/FataFavian/SiNC.git
-cd SiNC
-```
+2. **Siapkan Basis Data**:
+   - Buat database baru bernama `cnc_lms` pada MySQL lokal Anda.
+   - Impor skema dari file `backend-php/database.sql`.
 
-### 9.2 Siapkan database
+3. **Jalankan Backend**:
+   ```bash
+   cd backend-php
+   cp .env.example .env
+   # Sesuaikan DB_NAME, DB_USER, DB_PASS pada file .env
+   php -S 127.0.0.1:8000 api.php
+   ```
 
-1. Jalankan MySQL melalui XAMPP atau layanan database lokal.
-2. Buat database bernama `cnc_lms`.
-3. Import `backend-php/database.sql` melalui phpMyAdmin atau MySQL CLI.
+4. **Jalankan Frontend**:
+   Buka terminal baru:
+   ```bash
+   cd lms-cnc-client
+   npm install
+   npm run dev
+   ```
+   Akses aplikasi melalui peramban di `http://localhost:5173`.  
+   *(Mode coba simulator 3D instan tanpa login dapat langsung diakses melalui `http://localhost:5173/?demo=3d`)*.
 
-### 9.3 Konfigurasi backend
+---
 
-Masuk ke direktori backend:
+## 12. Atribusi, Hak Cipta, dan Transparansi AI
 
-```bash
-cd backend-php
-```
+### Atribusi Hak Cipta Mesin Acuan
+- Nama merek dan desain fisik mesin bubut **Gremat STH6166** merupakan hak kekayaan intelektual dari produsen terkait.
+- Pemodelan digital dan visualisasi dalam proyek ini digunakan secara wajar (*fair use*) murni sebagai media pembelajaran edukasi non-komersial bagi siswa kejuruan.
 
-Salin `.env.example` menjadi `.env`, lalu sesuaikan konfigurasi database dan secret lokal. Jangan mengisi nilai rahasia asli ke `.env.example` dan jangan commit file `.env`.
+### Pernyataan Transparansi Kecerdasan Artifisial (AI Disclosure)
+Sesuai dengan komitmen orisinalitas dan etika kompetisi:
+1. **Orisinalitas Gagasan & Keputusan Desain (Human-Led)**:  
+   Gagasan inti, analisis kebutuhan empiris di SMK, alur integrasi LMS-Simulator, penentuan mesin acuan Gremat, serta aturan desain visual (*liquid glass* 60:30:10) merupakan **100% hasil pemikiran dan keputusan orisinal tim pengembang**.
+2. **Pemanfaatan AI Sebagai Alat Bantu (AI Pair Programmer)**:  
+   Kecerdasan artifisial (Google Antigravity / Gemini) dimanfaatkan secara etis sebagai asisten pemrograman untuk membantu efisiensi penulisan sintaks Three.js, implementasi styling CSS, serta integrasi modul AI Tutor di dalam aplikasi.
 
-Contoh variabel yang perlu disesuaikan:
+---
 
-```env
-DB_HOST=127.0.0.1
-DB_NAME=cnc_lms
-DB_USER=root
-DB_PASS=
-CLIENT_URL=http://localhost:5173
-JWT_SECRET=ganti-dengan-secret-lokal
-APP_DEBUG=1
-LLM_API_URL=https://api.openai.com/v1/chat/completions
-LLM_API_KEY=
-LLM_MODEL=gpt-4o-mini
-```
+## 13. Batasan dan Rencana Pengembangan (Roadmap)
 
-Jalankan backend:
+### Batasan MVP Saat Ini
+- Simulator berfokus pada **Mesin Bubut CNC 2-Sumbu (2-Axis Lathe)** pada bidang X dan Z.
+- Perintah G-Code didesain untuk cakupan silindris dasar (`G00, G01, G02, G03, G90, G91`).
 
-```bash
-php -S 127.0.0.1:8000 api.php
-```
+### Rencana Tindak Lanjut Pasca-Kompetisi
+1. **Ekspansi ke Mesin Frais CNC (3-Axis CNC Milling)**:  
+   Mengembangkan modul simulator mesin frais 3-sumbu (X, Y, Z) untuk mendukung pembelajaran operasi *facing*, pembuatan kantung (*pocketing*), dan kontur permukaan 3D.
+2. **Penambahan Siklus Pemotongan Otomatis (*Canned Cycles*)**:  
+   Mendukung siklus pembubutan berulang seperti `G71` (roughing cycle), `G70` (finishing cycle), dan `G76` (threading cycle).
+3. **Analitik Kemajuan Belajar Siswa**:  
+   Dashboard diagnostik komprehensif untuk guru dalam mendeteksi pola kesalahan G-Code yang paling sering dialami siswa.
 
-### 9.4 Konfigurasi dan jalankan frontend
+---
 
-Buka terminal baru:
+## 14. Tim Pengembang (Development Team)
 
-```bash
-cd lms-cnc-client
-npm install
-npm run dev
-```
+| Nama Anggota | Akun GitHub | Peran & Tanggung Jawab Utama |
+|---|---|---|
+| **Fata Favian** | [@FataFavian](https://github.com/FataFavian) | Project Lead, Fullstack Architecture & 3D Lathe Simulator Engine |
+| **Farrell Ahmed Dimitrie Dhiaul Aulia** | [@meddmt2018](https://github.com/meddmt2018) | UI/UX Designer, Frontend Interface & Liquid Glass Styling |
+| **Amri** | [@Nyamukgila24](https://github.com/Nyamukgila24) | Backend Engineer, Database Schema & Scoring Logic |
+| **Fazrin Mauza** | [@zrinfa](https://github.com/zrinfa) | Vocational Curriculum Specialist, Quality Assurance & Engine Verification |
 
-Buka alamat yang ditampilkan Vite, umumnya:
+---
 
-```text
-http://localhost:5173
-```
+## 15. Informasi Kompetisi
 
-Aplikasi juga dapat langsung mencoba simulator mesin 3D tanpa login melalui:
-```text
-http://localhost:5173/?demo=3d
-```
+Proyek ini diajukan untuk mengikuti **LOGICODIX 2026 – Hackathon Competition**:
 
-## 10. Atribusi dan Referensi
-
-Seluruh aset, pustaka, API, model, dataset, template, dan materi pihak ketiga yang digunakan dalam produk harus dicantumkan secara transparan.
-
-| Jenis | Nama/Sumber | Bagian yang digunakan | Lisensi/URL |
-|---|---|---|---|
-| Library frontend | React | Antarmuka aplikasi | https://react.dev/ |
-| Build tool | Vite | Pengembangan dan build frontend | https://vite.dev/ |
-| Library 3D | Three.js | Visualisasi simulator 3D | https://threejs.org/ |
-| Backend | PHP | API dan logika aplikasi | https://www.php.net/ |
-| Database | MySQL | Penyimpanan data aplikasi | https://www.mysql.com/ |
-| Referensi panel CNC | Gremat CNC Panel Reference | Acuan perancangan panel 2D | [Lihat dokumentasi referensi](docs/images/references/references.md) |
-| Referensi mesin CNC | Gremat STH6166 CNC Lathe | Acuan pemodelan mesin 3D | [Lihat dokumentasi referensi](docs/images/references/references.md) |
-
-Jika menggunakan layanan AI, tuliskan nama layanan/model, tujuan penggunaan, dan bagian aplikasi yang memanfaatkannya. Pada implementasi ini, AI Tutor memiliki pemeriksaan G-Code otomatis di sisi aplikasi dan dapat menggunakan LLM eksternal apabila `LLM_API_URL`, `LLM_API_KEY`, serta `LLM_MODEL` dikonfigurasi. Jangan mencantumkan API key atau token pada README maupun repository.
-
-## 11. Pengujian
-
-Folder `backend-php/tests/` berisi skrip pengujian yang tersedia di repository. Jalankan pengujian sesuai kebutuhan dan lingkungan lokal.
-
-Contoh pengujian mesin G-Code:
-
-```bash
-php backend-php/tests/test-engine.php
-```
-
-## 12. Batasan dan Pengembangan Lanjutan
-
-SiNC berfokus pada pembelajaran dan simulasi dasar bubut CNC. Cakupan perintah G-Code yang didukung simulator saat ini terbatas pada perintah yang dijelaskan pada bagian fitur. Perilaku mesin CNC industri dapat berbeda menurut kontroler, parameter mesin, tool offset, material, dan konfigurasi aktual.
-
-Pengembangan lanjutan dapat mencakup perluasan cakupan G-Code, peningkatan validasi lintasan, pengayaan modul pembelajaran, analitik perkembangan siswa, dan penyempurnaan pengalaman guru dalam memberikan umpan balik.
-
-## 13. Tim Pengembang
-
-| Peran | Nama |
-|---|---|
-| Pengembang | **Tambahkan nama anggota tim resmi** |
-| Institusi | **Tambahkan institusi** |
-| Kontak | **Tambahkan email/tautan kontak tim** |
-
-## 14. Informasi Kompetisi
-
-Proyek ini disiapkan untuk mengikuti **LOGICODIX 2026 – Hackathon Competition** dengan tema besar:
-
-> **NextGen Digital Innovation: Crafting Creative Solutions for a Better Society**
-
-Subtema yang relevan: **Smart & Fun Education**.
+> **Tema Besar**: *NextGen Digital Innovation: Crafting Creative Solutions for a Better Society*  
+> **Subtema**: *Smart & Fun Education*  
+> **Institusi**: Tim Pengembang Mahasiswa / Vokasi Indonesia  
 
 ---
 
