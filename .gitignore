@@ -27,6 +27,7 @@ Thumbs.db
 *.swo
 *~
 
-# Cache Node
+# Cache Node & Tools
 .cache/
 .parcel-cache/
+.codegraph/
