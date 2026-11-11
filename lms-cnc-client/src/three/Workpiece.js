@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { COLORS, MM, PROFILE_RES } from './theme';
 
-export function createWorkpiece({ stockD, stockL, radialSegments = 72 }) {
+export function createWorkpiece({ stockD, stockL, radialSegments = 48 }) {
   const rings = Math.round(stockL / PROFILE_RES) + 1;
   const S = radialSegments;
   const cos = new Float32Array(S);

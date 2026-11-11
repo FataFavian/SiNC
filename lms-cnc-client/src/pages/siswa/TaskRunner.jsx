@@ -81,7 +81,7 @@ export default function TaskRunner({ id }) {
         </Alert>
       )}
       {punya?.status === 'dinilai' && (
-        <Alert tone="ok" title={`Dinilai guru ${punya.nilai_guru}/${t.poin}, nilai akhir ${nilaiAkhir}/100`}>
+        <Alert tone="ok" title={`Dinilai guru ${punya?.nilai_guru ?? '-'}/${t.poin}, nilai akhir ${nilaiAkhir ?? '-'}/100`}>
           {punya.catatan_guru || 'Tidak ada catatan tertulis dari guru.'}
         </Alert>
       )}

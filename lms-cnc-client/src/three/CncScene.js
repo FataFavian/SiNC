@@ -50,8 +50,9 @@ export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initi
     canvas,
     antialias: true,
     powerPreference: 'high-performance',
+    precision: 'mediump',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -82,7 +83,7 @@ export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initi
   const key = new THREE.DirectionalLight(0xffffff, 2.15);
   key.position.set(8, 14, 7);
   key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.mapSize.set(1024, 1024);
   const shadowExtent = Math.max(13, 10 + span * 0.85);
   key.shadow.camera.left = -shadowExtent;
   key.shadow.camera.right = shadowExtent;

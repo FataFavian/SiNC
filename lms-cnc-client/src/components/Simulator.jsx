@@ -393,6 +393,7 @@ export default function Simulator({
 
   const evs = kirim?.events || saved?.events || result?.events || [];
   const hl = useMemo(() => highlightGcode(gcode), [gcode]);
+  const isTugas = Boolean(submitTo);
   const shownScore = kirim?.skor ?? saved?.skor ?? result?.skor;
   const shownMatch = kirim?.match ?? saved?.match ?? result?.match;
   const shownDetail = (kirim?.compare ?? saved?.compare ?? result?.cmp)?.detail;
@@ -474,10 +475,16 @@ export default function Simulator({
               {evs.map((e, i) => <div key={i} className={e.type}>{e.msg}</div>)}
             </div>
 
-            {(result || saved || kirim) && (
+            {isTugas && (result || saved || kirim) && (
               <div className={`score ${shownMatch ? 'match' : 'nomatch'}`}>
                 Skor {shownScore}/100 {shownMatch ? 'sesuai target' : 'belum sesuai target'}
                 <div className="dim">{shownDetail}</div>
+              </div>
+            )}
+            {!isTugas && (result || saved) && (
+              <div className={`score ${crashed ? 'nomatch' : 'match'}`}>
+                {crashed ? 'Pahat Menabrak Benda Kerja' : 'Simulasi Bebas: Eksekusi Aman'}
+                <div className="dim">{crashed ? 'Pahat menabrak benda kerja pada lintasan cepat.' : 'Simulator bebas tidak dinilai. Program aman tanpa tabrakan.'}</div>
               </div>
             )}
           </div>
@@ -571,10 +578,17 @@ export default function Simulator({
 
                       <div className="u-row" style={{ gap: 8 }}>
                         {result && (status === 'SELESAI' || status === 'ALARM') && (
-                          <div className={`run-score ${shownMatch ? 'match' : 'nomatch'}`}>
-                            <b>{shownScore}<em>/100</em></b>
-                            <span>{shownMatch ? 'sesuai target' : 'belum sesuai target'}</span>
-                          </div>
+                          isTugas ? (
+                            <div className={`run-score ${shownMatch ? 'match' : 'nomatch'}`}>
+                              <b>{shownScore}<em>/100</em></b>
+                              <span>{shownMatch ? 'sesuai target' : 'belum sesuai target'}</span>
+                            </div>
+                          ) : (
+                            <div className={`run-score ${status === 'ALARM' ? 'nomatch' : 'match'}`}>
+                              <b>{status === 'ALARM' ? 'TABRAKAN' : 'AMAN'}</b>
+                              <span>{status === 'ALARM' ? 'pahat menabrak' : 'tanpa tabrakan'}</span>
+                            </div>
+                          )
                         )}
                         <button
                           className="run-btn run-btn--primary"
@@ -718,7 +732,7 @@ export default function Simulator({
 
           {!isRunView && tutor && (
             <div className="tutor">
-              <b>CNC-Bot <span className="dim">({tutor.source}) • skor {tutor.skor ?? shownScore}/100</span></b>
+              <b>CNC-Bot <span className="dim">({tutor.source}){isTugas && (tutor.skor != null || shownScore != null) ? ` • skor ${tutor.skor ?? shownScore}/100` : ''}</span></b>
               <ul>{tutor.feedback.map((t, i) => <li key={i} style={{ whiteSpace: 'pre-line' }}>{t}</li>)}</ul>
               {tutor.rekomendasi && (
                 <button className="sec" onClick={() => onRekomendasi?.(tutor.rekomendasi.modul_id)}>
@@ -753,11 +767,14 @@ export default function Simulator({
         </Field>
         <div className="kv">
           <span>Ukuran stock</span><b className="mono">Ø{stockD} x {stockL} mm</b>
-          <span>Target</span><b className="mono">Ø{target.target_d} x Z-{target.target_z} mm</b>
+          {isTugas && <span>Target</span>}
+          {isTugas && <b className="mono">Ø{target.target_d} x Z-{target.target_z} mm</b>}
           <span>Baris kode</span><b className="mono">{gcode.split('\n').filter((l) => l.trim()).length} baris</b>
         </div>
         <p className="dim">
-          {sim ? `Skor simulasi saat ini ${sim.skor}/100${sim.ada_error ? ', ada tabrakan pada program' : ''}.` : 'Program belum dapat dibaca; periksa sintaks G-Code.'}
+          {isTugas
+            ? (sim ? `Skor simulasi saat ini ${sim.skor}/100${sim.ada_error ? ', ada tabrakan pada program' : ''}.` : 'Program belum dapat dibaca; periksa sintaks G-Code.')
+            : (sim ? `Program valid${sim.ada_error ? ', terdeteksi tabrakan pada pahat' : ', siap disimpan'}.` : 'Program belum dapat dibaca; periksa sintaks G-Code.')}
         </p>
       </Modal>
     </div>

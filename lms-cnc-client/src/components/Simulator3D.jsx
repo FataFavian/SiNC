@@ -71,34 +71,44 @@ export default function Simulator3D({
     if (!sim || !playheadRef) return;
     const cutter = createCutter(sim, stockD);
     let raf = 0;
+    let lastPh = -1;
+    let lastStatus = '';
 
     const tick = () => {
       const api = apiRef.current;
       const ph = Math.max(0, Math.min(playheadRef.current || 0, sim.moves.length));
       if (api) {
-        const { profile, idx } = cutter.update(ph);
-        api.setProfile(profile);
-        api.setMoves(sim.moves, idx);
-        const pos = toolAt(sim.moves, ph, stockD);
-        api.setTool(pos.x / 2, pos.z);
+        const phChanged = Math.abs(ph - lastPh) > 0.0001;
+        const statusChanged = status !== lastStatus;
 
-        const m = sim.moves[idx];
-        const t = ph - idx;
-        const cutting = status === 'AUTO' && !!m && !m.rapid && t > 0.002 && t < 0.998 && !crashed;
-        api.setCutting(cutting);
-        api.setSpindle(status === 'AUTO' && !crashed);
-        api.setCoolant(status === 'AUTO' && !crashed, profile);
-        api.setPanel({
-          profile,
-          preview: sim.profile,
-          tool: { x: pos.x, z: pos.z },
-          stockD,
-          stockL,
-          target,
-          status,
-          line: `N${String(1000 + Math.floor(ph) * 10).padStart(4, '0')}`,
-          cutting,
-        });
+        if (phChanged || statusChanged) {
+          lastPh = ph;
+          lastStatus = status;
+
+          const { profile, idx } = cutter.update(ph);
+          api.setProfile(profile);
+          api.setMoves(sim.moves, idx);
+          const pos = toolAt(sim.moves, ph, stockD);
+          api.setTool(pos.x / 2, pos.z);
+
+          const m = sim.moves[idx];
+          const t = ph - idx;
+          const cutting = status === 'AUTO' && !!m && !m.rapid && t > 0.002 && t < 0.998 && !crashed;
+          api.setCutting(cutting);
+          api.setSpindle(status === 'AUTO' && !crashed);
+          api.setCoolant(status === 'AUTO' && !crashed, profile);
+          api.setPanel({
+            profile,
+            preview: sim.profile,
+            tool: { x: pos.x, z: pos.z },
+            stockD,
+            stockL,
+            target,
+            status,
+            line: `N${String(1000 + Math.floor(ph) * 10).padStart(4, '0')}`,
+            cutting,
+          });
+        }
       }
       raf = requestAnimationFrame(tick);
     };
