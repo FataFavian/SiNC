@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.06" />
+    </filter>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#475569" />
+    </marker>
+    <marker id="arrow-danger" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#dc2626" />
+    </marker>
+    <marker id="arrow-success" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#16a34a" />
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="900" fill="url(#bg-grad)" rx="16" />
+  <rect x="10" y="10" width="1180" height="880" fill="none" stroke="#e2e8f0" stroke-width="1.5" rx="14" />
+
+  <!-- Title Header -->
+  <rect x="40" y="24" width="1120" height="60" fill="#ffffff" rx="10" filter="url(#shadow)" stroke="#e2e8f0" />
+  <text x="60" y="52" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Activity Diagram : Alur Simulasi G-Code &amp; Penilaian Otomatis</text>
+  <text x="60" y="72" font-family="system-ui, sans-serif" font-size="12.5" font-weight="400" fill="#64748b">Aktivitas Siswa dari Membaca Jobsheet, Eksekusi Engine G-Code 3D, Deteksi Alarm, Konsultasi AI, hingga Penilaian di Cloud</text>
+
+  <!-- Swimlane 1: Siswa (Frontend UI) -->
+  <rect x="40" y="100" width="360" height="770" fill="#ffffff" rx="10" filter="url(#shadow)" stroke="#cbd5e1" />
+  <rect x="40" y="100" width="360" height="44" fill="#eff6ff" rx="10" />
+  <rect x="40" y="130" width="360" height="14" fill="#eff6ff" />
+  <text x="220" y="128" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#1e40af" text-anchor="middle">1. Siswa (Frontend Panel Interaktif)</text>
+
+  <!-- Swimlane 2: Client Simulation Engine -->
+  <rect x="420" y="100" width="400" height="770" fill="#ffffff" rx="10" filter="url(#shadow)" stroke="#cbd5e1" />
+  <rect x="420" y="100" width="400" height="44" fill="#f0fdf4" rx="10" />
+  <rect x="420" y="130" width="400" height="14" fill="#f0fdf4" />
+  <text x="620" y="128" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#166534" text-anchor="middle">2. G-Code Simulation Engine &amp; Three.js</text>
+
+  <!-- Swimlane 3: AI Tutor & Cloud Backend -->
+  <rect x="840" y="100" width="320" height="770" fill="#ffffff" rx="10" filter="url(#shadow)" stroke="#cbd5e1" />
+  <rect x="840" y="100" width="320" height="44" fill="#faf5ff" rx="10" />
+  <rect x="840" y="130" width="320" height="14" fill="#faf5ff" />
+  <text x="1000" y="128" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#6b21a8" text-anchor="middle">3. Gemini AI Tutor &amp; Firestore Cloud</text>
+
+  <!-- Initial State (Start Node) -->
+  <circle cx="220" cy="175" r="14" fill="#0284c7" stroke="#bae6fd" stroke-width="4" />
+
+  <!-- Action: Pilih Jobsheet -->
+  <rect x="110" y="215" width="220" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2" />
+  <text x="220" y="241" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#1e293b" text-anchor="middle">Buka Tugas &amp; Baca LKPD PDF</text>
+
+  <!-- Action: Tulis G-Code -->
+  <rect x="110" y="285" width="220" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2" />
+  <text x="220" y="311" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#1e293b" text-anchor="middle">Input Program G-Code (Panel 2D)</text>
+
+  <!-- Action: Klik Cycle Start -->
+  <rect x="110" y="355" width="220" height="42" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.4" />
+  <text x="220" y="381" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#b91c1c" text-anchor="middle">Tekan Tombol Cycle Start</text>
+
+  <!-- Engine Action: Parsing & Kinematika -->
+  <rect x="470" y="355" width="300" height="42" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.2" />
+  <text x="620" y="381" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#14532d" text-anchor="middle">Parsing G-Code &amp; Perhitungan Lintasan</text>
+
+  <!-- Engine Decision: Collision Check -->
+  <path d="M 620 425 L 685 465 L 620 505 L 555 465 Z" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="620" y="462" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#92400e" text-anchor="middle">Deteksi Tabrakan?</text>
+  <text x="620" y="476" font-family="system-ui, sans-serif" font-size="9.5" font-weight="600" fill="#b45309" text-anchor="middle">(G00 Hit / Chuck Hit)</text>
+
+  <!-- IF COLLISION: Engine Stop & Alarm -->
+  <rect x="470" y="540" width="300" height="42" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.2" />
+  <text x="620" y="566" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#991b1b" text-anchor="middle">Stop Mesin &amp; Nyalakan Alarm E-Stop</text>
+
+  <!-- AI Tutor: Analisis Error -->
+  <rect x="870" y="540" width="260" height="46" rx="8" fill="#faf5ff" stroke="#a855f7" stroke-width="1.4" filter="url(#shadow)" />
+  <text x="1000" y="563" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6b21a8" text-anchor="middle">CNC-Bot AI (Gemini Flash)</text>
+  <text x="1000" y="578" font-family="system-ui, sans-serif" font-size="10" font-weight="500" fill="#7e22ce" text-anchor="middle">Berikan Panduan Koreksi Sokratik</text>
+
+  <!-- IF NO COLLISION: 3D Lathe Execution -->
+  <rect x="470" y="630" width="300" height="48" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="620" y="653" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#065f46" text-anchor="middle">Eksekusi Visualisasi 3D Three.js</text>
+  <text x="620" y="669" font-family="system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#047857" text-anchor="middle">Zoom-out Sinematik, Coolant, Pahat &amp; Geram</text>
+
+  <!-- Engine: Hitung Nilai Toleransi -->
+  <rect x="470" y="715" width="300" height="42" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.2" />
+  <text x="620" y="741" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#14532d" text-anchor="middle">Hitung Skor Deviasi Toleransi (0 - 100)</text>
+
+  <!-- Cloud: Simpan Percobaan di Firestore -->
+  <rect x="870" y="715" width="260" height="42" rx="8" fill="#faf5ff" stroke="#a855f7" stroke-width="1.2" />
+  <text x="1000" y="741" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#6b21a8" text-anchor="middle">Simpan Hasil ke Firestore Cloud</text>
+
+  <!-- UI Siswa: Terima Hasil & Feedback -->
+  <rect x="110" y="715" width="220" height="42" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.2" />
+  <text x="220" y="741" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Lihat Skor &amp; Kirim Tugas ke Guru</text>
+
+  <!-- Final State (End Node) -->
+  <circle cx="220" cy="820" r="16" fill="none" stroke="#0f172a" stroke-width="2" />
+  <circle cx="220" cy="820" r="10" fill="#0f172a" />
+
+  <!-- Arrows & Connectors -->
+  <path d="M 220 189 L 220 215" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 220 257 L 220 285" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 220 327 L 220 355" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 330 376 L 470 376" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 620 397 L 620 425" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+
+  <!-- Collision Branch: Yes -->
+  <path d="M 620 505 L 620 540" stroke="#dc2626" stroke-width="1.6" marker-end="url(#arrow-danger)" />
+  <text x="628" y="525" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#dc2626">Ya (Tabrakan)</text>
+  <path d="M 770 561 L 870 561" stroke="#a855f7" stroke-width="1.6" marker-end="url(#arrow)" />
+  <path d="M 1000 586 L 1000 605 L 220 605 L 220 327" stroke="#a855f7" stroke-width="1.4" stroke-dasharray="4 3" fill="none" marker-end="url(#arrow)" />
+  <text x="340" y="600" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#7e22ce">Siswa Memperbaiki Kode Sesuai Arahan AI</text>
+
+  <!-- Collision Branch: No -->
+  <path d="M 685 465 L 790 465 L 790 654 L 770 654" stroke="#16a34a" stroke-width="1.6" fill="none" marker-end="url(#arrow-success)" />
+  <text x="700" y="455" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#16a34a">Aman (Valid)</text>
+
+  <!-- Selesai 3D -> Hitung Nilai -->
+  <path d="M 620 678 L 620 715" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow-success)" />
+
+  <!-- Engine -> Cloud & UI -->
+  <path d="M 770 736 L 870 736" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 470 736 L 330 736" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+  <path d="M 220 757 L 220 804" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+
+</svg>
