@@ -1,5 +1,5 @@
 // =============================================================
-// Sparks.js — percikan dan geram kecil di titik potong (G01/G02/G03).
+// Sparks.js - percikan dan geram kecil di titik potong (G01/G02/G03).
 // Satu Points pool, material additive, tanpa alokasi per frame.
 // =============================================================
 import * as THREE from 'three';

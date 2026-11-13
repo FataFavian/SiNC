@@ -1,5 +1,5 @@
 // =============================================================
-// CncScene.js — perakitan scene 3D: renderer, kamera, lampu, mesin,
+// CncScene.js - perakitan scene 3D: renderer, kamera, lampu, mesin,
 // benda kerja, pahat, toolpath, penanda target, dan siklus render.
 // API imperatif dipakai oleh komponen React (Simulator3D.jsx).
 // =============================================================

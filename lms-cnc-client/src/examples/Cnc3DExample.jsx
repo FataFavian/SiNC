@@ -1,5 +1,5 @@
 // =============================================================
-// Cnc3DExample.jsx — halaman contoh simulator bubut CNC 3D.
+// Cnc3DExample.jsx - halaman contoh simulator bubut CNC 3D.
 // Dibuka tanpa login di /?demo=3d. Tujuannya: memperlihatkan mesin,
 // pahat, dan benda kerja yang benar-benar terpotong secara 3D.
 // Data simulasi tetap memakai engine yang sama dengan simulator 2D.

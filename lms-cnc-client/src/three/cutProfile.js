@@ -1,5 +1,5 @@
 // =============================================================
-// cutProfile.js — pemotongan bertahap dari playhead pecahan.
+// cutProfile.js - pemotongan bertahap dari playhead pecahan.
 // Dipakai bersama oleh viewport 3D dan 2D agar bentuk benda kerja
 // selalu identik dengan engine simulate().
 // =============================================================

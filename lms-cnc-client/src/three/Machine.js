@@ -1,5 +1,5 @@
 // =============================================================
-// Machine.js — bodi mesin bubut: bed, headstock, chuck 3 rahang,
+// Machine.js - bodi mesin bubut: bed, headstock, chuck 3 rahang,
 // tailstock, dan panel kontrol. Dimensi dalam unit scene (1 unit = 10 mm).
 // Z=0 adalah muka benda kerja; chuck & headstock berada di Z positif,
 // sehingga pahat di Z=0 tetap terlihat (tidak tertelan chuck).

@@ -1,5 +1,5 @@
 // =============================================================
-// playback.js — utilitas pemetaan playhead -> posisi pahat.
+// playback.js - utilitas pemetaan playhead -> posisi pahat.
 // Dipisah dari komponen agar Fast Refresh Vite tetap bekerja.
 // =============================================================
 

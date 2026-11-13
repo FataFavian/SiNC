@@ -1,5 +1,5 @@
 // =============================================================
-// theme.js — konstanta visual simulator 3D.
+// theme.js - konstanta visual simulator 3D.
 // Konvensi: sumbu benda kerja = world Z (Z=0 muka chuck, Z negatif
 // ke tailstock), 1 unit Three.js = ~22 mm (MM = 0.045), X pada G-Code = DIAMETER.
 // =============================================================
@@ -35,7 +35,7 @@ export const COLORS = {
   coolant: 0x4aa7e8,
 };
 
-// preset kamera (posisi, target) — dipakai tombol di overlay
+// preset kamera (posisi, target) - dipakai tombol di overlay
 export const VIEWS = {
   iso: { pos: [18.0, 10.5, 6.5], target: [0, -0.6, -1.2] },
   depan: { pos: [19.0, 3.8, -1.2], target: [0, -0.6, -1.2] },
