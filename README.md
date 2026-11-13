@@ -96,7 +96,7 @@ flowchart LR
 
 ---
 
-## 6. Alur Penggunaan (User Flow)
+## 6. Alur Penggunaan & Pemodelan Sistem
 
 ```mermaid
 flowchart LR
@@ -110,6 +110,16 @@ flowchart LR
     G --> I[Kirim Tugas ke Guru / Konsultasi AI]
     H --> I
 ```
+
+### 6.1 Use Case Diagram (Interaksi Hak Akses Antara Aktor)
+Diagram berikut memetakan pembagian wewenang dan interaksi fungsional antara Administrator, Guru Kejuruan, dan Siswa SMK dalam ekosistem platform SiNC:
+
+![Use Case Diagram SiNC](docs/images/diagrams/use-case-diagram.svg)
+
+### 6.2 Activity Diagram (Alur Eksekusi G-Code & Evaluasi Otomatis)
+Diagram aktivitas berikut memvisualisasikan perjalanan komputasi dari saat siswa menginput perintah G-Code pada panel kontrol 2D, validasi tabrakan (rapid collision dan chuck collision), transisi panggung 3D Three.js, bimbingan AI Tutor Sokratik, hingga penilaian toleransi di cloud:
+
+![Activity Diagram Simulasi G-Code SiNC](docs/images/diagrams/activity-diagram.svg)
 
 ---
 
@@ -188,6 +198,11 @@ Aplikasi ini telah dimigrasikan dari arsitektur monolitik (PHP + MySQL + cPanel)
 3. **Client-Side Simulation Parity**: Seluruh kalkulasi koordinat G-Code, deteksi tabrakan (rapid collision, chuck hit), dan evaluasi toleransi profil dieksekusi 100% di browser tanpa latensi jaringan.
 4. **AI Asisten Real-time**: Menggunakan **Google Gemini 3.5 Flash-Lite** secara serverless untuk memberikan bimbingan interaktif kepada siswa dan guru.
 
+### 9.2 Diagram Relasi Entitas Data (Database ERD)
+Meskipun menggunakan basis data NoSQL Cloud Firestore, relasi logis antar koleksi dokumen tetap dirancang dengan integritas data referensial yang ketat untuk menjamin keamanan hak akses akademik (*Firestore Security Rules*):
+
+![Entity Relationship Diagram SiNC](docs/images/diagrams/database-erd.svg)
+
 ---
 
 ## 10. Struktur Direktori Repositori
@@ -199,6 +214,10 @@ SiNC/
 │       └── deploy.yml          # Otomatisasi build & deploy ke GitHub Pages
 ├── docs/                       # Dokumentasi arsitektur dan aset visual
 │   ├── images/
+│   │   ├── diagrams/           # Diagram arsitektur, use case, activity, dan ERD
+│   │   │   ├── activity-diagram.svg
+│   │   │   ├── database-erd.svg
+│   │   │   └── use-case-diagram.svg
 │   │   └── references/         # Foto referensi mesin fisik & kontroler acuan
 │   │       ├── references.md
 │   │       ├── referensi control panel cnc.jpeg
