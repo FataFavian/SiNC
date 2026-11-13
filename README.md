@@ -19,10 +19,6 @@ Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** y
 
 🌐 **Demo Live Web:** [https://zrinfa.github.io/SiNC/](https://zrinfa.github.io/SiNC/)
 
-![Panel kontrol simulator saat menyusun program](docs/simulator-panel.png)
-
----
-
 ## 1. Tentang SiNC
 
 **SiNC (Simulator CNC)** adalah platform Learning Management System (LMS) terpadu yang mengintegrasikan simulator bubut CNC interaktif dengan aktivitas pembelajaran vokasi. Aplikasi ini dirancang sebagai jembatan praktis dalam pembelajaran pemrograman CNC, khususnya pengenalan, perancangan, dan verifikasi kode G-Code mesin bubut.
@@ -136,8 +132,6 @@ Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi pal
 ![Mesin 3D layar penuh dengan coolant aktif](docs/simulator-3d.png)
 
 ![Detail panel fisik, selang coolant, dan semprotan ke benda kerja](docs/simulator-3d-detail.png)
-
----
 
 ## 8. Stack Teknologi
 
