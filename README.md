@@ -343,6 +343,14 @@ Proyek ini diajukan untuk mengikuti **LOGICODIX 2026 - Hackathon Competition**:
 
 ---
 
+---
+
+## 17. Lisensi (License)
+
+Proyek ini didistribusikan di bawah lisensi terbuka **MIT License**. Lihat berkas [LICENSE](LICENSE) untuk ketentuan lengkap penggunaan, modifikasi, dan atribusi.
+
+---
+
 <p align="center">
   <strong>SiNC: Learn G-Code. Visualize the Process. Understand CNC.</strong>
 </p>
