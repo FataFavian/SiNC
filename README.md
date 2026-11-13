@@ -17,7 +17,11 @@
 
 Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** yang menggabungkan kelas virtual, simulator mesin bubut CNC 3D interaktif, dan asisten cerdas **Google Gemini AI**.
 
-🌐 **Demo Live Web:** [https://zrinfa.github.io/SiNC/](https://zrinfa.github.io/SiNC/)
+🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)
+
+![Panel kontrol simulator saat menyusun program](docs/simulator-panel.png)
+
+---
 
 ## 1. Tentang SiNC
 
@@ -132,6 +136,8 @@ Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi pal
 ![Mesin 3D layar penuh dengan coolant aktif](docs/simulator-3d.png)
 
 ![Detail panel fisik, selang coolant, dan semprotan ke benda kerja](docs/simulator-3d-detail.png)
+
+---
 
 ## 8. Stack Teknologi
 
