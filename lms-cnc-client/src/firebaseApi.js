@@ -715,7 +715,16 @@ export async function handleFirebaseApi(path, opts = {}, formData = null) {
   if (segments[0] === 'modules') {
     if (segments.length === 1 && method === 'GET') {
       const snap = await getDocs(collection(db, 'modul_latihan'));
-      const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      const list = snap.docs.map((d) => {
+        const data = d.data();
+        const tgt = data.target || data.target_profil || {
+          stock_d: data.stock_d || 40,
+          stock_l: data.stock_l || 60,
+          target_d: data.target_d || 20,
+          target_z: data.target_z || 40,
+        };
+        return { id: d.id, ...data, target: tgt, target_profil: tgt };
+      });
       list.sort((a, b) => (a.level || 0) - (b.level || 0));
       return list;
     }

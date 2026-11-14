@@ -155,11 +155,14 @@ export default function Modules() {
             {
               key: 'target',
               header: 'Target',
-              render: (m) => (
-                <span className="mono" style={{ fontSize: 12 }}>
-                  <Icon name="ruler" size={13} /> Ø{m.target.stock_d}/{m.target.target_d} • L{m.target.stock_l}/Z-{m.target.target_z}
-                </span>
-              ),
+              render: (m) => {
+                const tgt = m.target || m.target_profil || { stock_d: m.stock_d || 40, stock_l: m.stock_l || 60, target_d: m.target_d || 20, target_z: m.target_z || 40 };
+                return (
+                  <span className="mono" style={{ fontSize: 12 }}>
+                    <Icon name="ruler" size={13} /> Ø{tgt.stock_d || 40}/{tgt.target_d || 20} • L{tgt.stock_l || 60}/Z-{tgt.target_z || 40}
+                  </span>
+                );
+              },
             },
             { key: 'dibuat_nama', header: 'Penyusun', render: (m) => m.dibuat_nama || <span className="dim">-</span> },
             { key: 'jumlah_tugas', header: 'Pakai di tugas', align: 'center', render: (m) => <Badge tone={m.jumlah_tugas ? 'ok' : 'muted'}>{m.jumlah_tugas}</Badge> },
@@ -184,11 +187,12 @@ export default function Modules() {
                     size="sm"
                     variant="sec"
                     onClick={() => {
+                      const tgt = m.target || m.target_profil || { stock_d: m.stock_d || 40, stock_l: m.stock_l || 60, target_d: m.target_d || 20, target_z: m.target_z || 40 };
                       setEditing(m.id);
                       setForm({
                         judul: m.judul, level: m.level, deskripsi: m.deskripsi || '',
-                        stock_d: m.target.stock_d, stock_l: m.target.stock_l,
-                        target_d: m.target.target_d, target_z: m.target.target_z,
+                        stock_d: tgt.stock_d || 40, stock_l: tgt.stock_l || 60,
+                        target_d: tgt.target_d || 20, target_z: tgt.target_z || 40,
                         starter_gcode: m.starter_gcode || '',
                       });
                       window.scrollTo({ top: 0, behavior: 'smooth' });

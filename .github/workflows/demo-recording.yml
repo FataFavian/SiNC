@@ -1,0 +1,61 @@
+name: Record Feature Demo Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      demo_url:
+        description: 'Target live URL to record'
+        required: false
+        default: 'https://fatafavian.github.io/SiNC/'
+      commit_video:
+        description: 'Commit generated video to repository'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  record-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm install playwright
+          npx playwright install chromium
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Run automated walkthrough and record video
+        env:
+          DEMO_URL: ${{ github.event.inputs.demo_url || 'https://fatafavian.github.io/SiNC/' }}
+          CHROME_BIN: ''
+        run: node scripts/record-demo.js
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sinc-feature-demo-video
+          path: docs/demo-sinc.mp4
+          retention-days: 14
+
+      - name: Commit video to repository
+        if: ${{ github.event.inputs.commit_video != 'false' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/demo-sinc.mp4
+          if git diff --staged --quiet; then
+            echo "No video changes to commit."
+          else
+            git commit -m "docs(demo): update automated walkthrough demonstration video"
+            git push origin main
+          fi

@@ -85,7 +85,7 @@ export default function Login() {
         </div>
 
         <h2 className="auth__hero-title">
-          Belajar pemrograman bubut CNC sampai <span className="auth__hero-accent">benar–benar terampil.</span>
+          Belajar pemrograman bubut CNC sampai <span className="auth__hero-accent">benar-benar terampil.</span>
         </h2>
         <p className="auth__hero-sub">
           Simulator bubut CNC berbasis web dengan LMS ringan dan AI Tutor untuk pembelajaran G-Code.
@@ -122,6 +122,30 @@ export default function Login() {
             <button type="button" className={mode === 'login' ? 'is-active' : ''} onClick={() => { setMode('login'); setErr(''); }}>Login</button>
             <button type="button" className={mode === 'register' ? 'is-active' : ''} onClick={() => { setMode('register'); setErr(''); }}>Daftar</button>
           </div>
+
+          {mode === 'login' && (
+            <div style={{ margin: '0 0 14px', background: 'var(--surface-2, #f8fafc)', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--line)' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
+                Akun Demo Instan (Sekali Klik):
+              </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                {DEMO.map(([peran, em]) => (
+                  <button
+                    key={em}
+                    type="button"
+                    className="btn btn--subtle btn--sm"
+                    style={{ fontSize: 11, padding: '5px 4px', textAlign: 'center', whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, email: em, password: 'password123' }));
+                      setErr('');
+                    }}
+                  >
+                    {peran}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {mode === 'register' && (
             <Field label="Nama lengkap" required>
