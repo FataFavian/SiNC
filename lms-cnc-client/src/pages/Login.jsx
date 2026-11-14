@@ -123,6 +123,30 @@ export default function Login() {
             <button type="button" className={mode === 'register' ? 'is-active' : ''} onClick={() => { setMode('register'); setErr(''); }}>Daftar</button>
           </div>
 
+          {mode === 'login' && (
+            <div style={{ margin: '0 0 14px', background: 'var(--surface-2, #f8fafc)', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--line)' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
+                Akun Demo Instan (Sekali Klik):
+              </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                {DEMO.map(([peran, em]) => (
+                  <button
+                    key={em}
+                    type="button"
+                    className="btn btn--subtle btn--sm"
+                    style={{ fontSize: 11, padding: '5px 4px', textAlign: 'center', whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, email: em, password: 'password123' }));
+                      setErr('');
+                    }}
+                  >
+                    {peran}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {mode === 'register' && (
             <Field label="Nama lengkap" required>
               <Input className="input" value={form.nama} onChange={set('nama')} placeholder="Nama sesuai rapor" autoComplete="name" />

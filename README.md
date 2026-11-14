@@ -18,14 +18,12 @@
 Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** yang menggabungkan kelas virtual, simulator mesin bubut CNC 3D interaktif, dan asisten cerdas **Google Gemini AI**.
 
 🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)  
-🎬 **Video Demonstrasi Penuh (2.5 Menit):** [Putar di GitHub Video Player](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4) | [Unduh Berkas MP4](https://github.com/FataFavian/SiNC/releases/download/v1.0.0/demo-sinc.mp4)
+🎬 **Video Demonstrasi Penuh:** [Tonton Langsung Video Demonstrasi MP4](https://fatafavian.github.io/SiNC/docs/demo-sinc.mp4)
 
-[![Cuplikan Video Demonstrasi SiNC](docs/demo-preview.gif)](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4)
+[![Cuplikan Video Demonstrasi SiNC](docs/demo-preview.gif)](https://fatafavian.github.io/SiNC/docs/demo-sinc.mp4)
 
-> ▶️ **[Klik gambar di atas atau klik di sini untuk memutar Video Demonstrasi Fitur Lengkap di GitHub Video Player](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4)**  
-> *Rekaman video memperlihatkan login akun siswa, eksplorasi materi, pemotongan 3D interaktif, inspeksi putar 360 derajat, alarm tabrakan chuck, dan pendampingan AI CNC-Bot.*
-
-![Panel kontrol simulator saat menyusun program](docs/simulator-panel.png)
+> ▶️ **[Klik gambar di atas atau klik di sini untuk memutar Video Demonstrasi Lengkap](https://fatafavian.github.io/SiNC/docs/demo-sinc.mp4)**  
+> *Rekaman video memperlihatkan alur kerja komprehensif 3 peran pengguna: Siswa (eksplorasi materi, pemotongan bubut 3D, inspeksi 360°, AI CNC-Bot, alarm tabrakan), Guru Pengampu (manajemen kelas, penugasan jobsheet, pustaka modul), dan Administrator (statistik KBM, manajemen akun, pengaturan rombel).*
 
 ---
 
@@ -149,9 +147,9 @@ Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi pal
 - **10% Coral Accent**: Menyorot elemen aksi utama (*Call to Action*), indikator status aktif mesin, dan tombol darurat.
 
 ### Galeri Tangkapan Layar Simulator 3D
-![Mesin 3D layar penuh dengan coolant aktif](docs/simulator-3d.png)
+![Mesin bubut 3D interaktif dengan pemotongan, coolant aktif, dan serpihan geram](docs/simulator-3d.png)
 
-![Detail panel fisik, selang coolant, dan semprotan ke benda kerja](docs/simulator-3d-detail.png)
+![Mode inspeksi benda kerja 3D pameran 360 derajat dengan dimensi presisi](docs/simulator-3d-detail.png)
 
 ---
 
@@ -229,10 +227,10 @@ SiNC/
 │   │       ├── referensi control panel cnc.jpeg
 │   │       └── referensi mesin cnc gremat sth6166.webp
 │   ├── system-architecture.svg # Diagram arsitektur sistem putih bersih
-│   ├── demo-sinc.mp4           # Rekaman demonstrasi fitur interaktif (walkthrough)
-│   ├── simulator-panel.png     # Cuplikan antarmuka panel kontrol 2D
-│   ├── simulator-3d.png        # Cuplikan simulator mesin 3D layar penuh
-│   └── simulator-3d-detail.png # Detail pahat, coolant, dan pencekam
+│   ├── demo-sinc.mp4           # Rekaman demonstrasi fitur interaktif (walkthrough 3 peran)
+│   ├── demo-preview.gif        # Cuplikan animasi proses pembubutan halus 3D
+│   ├── simulator-3d.png        # Cuplikan simulator mesin 3D layar penuh dan pemotongan
+│   └── simulator-3d-detail.png # Inspeksi 3D benda kerja pameran 360 dan dimensi
 ├── firestore.rules             # Aturan keamanan database Cloud Firestore
 ├── storage.rules               # Aturan keamanan akses berkas Firebase Storage
 ├── lms-cnc-client/             # Aplikasi frontend SPA (React + Three.js)
