@@ -1,0 +1,12 @@
+{
+  "name": "sinc-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SiNC - Simulator CNC & LMS Terpadu",
+  "scripts": {
+    "record-demo": "node scripts/record-demo.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.52.0"
+  }
+}
