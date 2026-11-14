@@ -190,9 +190,9 @@ Dokumentasi lengkap foto referensi fisik tersedia pada berkas [docs/images/refer
 
 ### Konsep Desain Antarmuka (Liquid Glass Aesthetics)
 Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi palet warna terukur:
-- **60% Navy Deep**: Memberikan fokus visual, kontras tinggi, dan kenyamanan ergonomis di layar simulator kerja (*dark workspace*).
-- **30% Cream Slate**: Sebagai bidang kontainer panel kontrol, tipografi sekunder, dan pembatas konten yang lembut.
-- **10% Coral Accent**: Menyorot elemen aksi utama (*Call to Action*), indikator status aktif mesin, dan tombol darurat.
+- **60% Clean White Canvas**: Bidang latar belakang utama, kontainer kartu, dan kanvas edukasi bersih (*clean workspace*) untuk kenyamanan membaca konten LMS dan visibilitas tinggi pada proyektor kelas.
+- **30% Blueprint Navy**: Elemen struktural seperti sidebar navigasi, header kontroler, dan tipografi penegas yang kokoh khas cetak biru teknik mesin industri.
+- **10% Coral Accent**: Menyorot elemen aksi utama (*Call to Action*), indikator status aktif mesin, tenggat waktu, dan tombol darurat.
 
 ### Galeri Tangkapan Layar Simulator 3D
 ![Mesin bubut 3D interaktif dengan pemotongan, coolant aktif, dan serpihan geram](docs/simulator-3d.png)
@@ -379,10 +379,10 @@ Sesuai dengan komitmen orisinalitas dan etika kompetisi:
 
 | Nama Anggota | Akun GitHub | Peran & Tanggung Jawab Utama |
 |---|---|---|
-| **Fata Favian** | [@FataFavian](https://github.com/FataFavian) | Project Lead, Fullstack Architecture & 3D Lathe Simulator Engine |
-| **Farrell Ahmed Dimitrie Dhiaul Aulia** | [@meddmt2018](https://github.com/meddmt2018) | UI/UX Designer, Frontend Interface & Liquid Glass Styling |
-| **Amri** | [@Nyamukgila24](https://github.com/Nyamukgila24) | Software Engineer, Simulation Logic & Scoring Engine |
-| **Fazrin Mauza** | [@zrinfa](https://github.com/zrinfa) | Vocational Curriculum Specialist, Quality Assurance & Engine Verification |
+| **Fata Favian** | [@FataFavian](https://github.com/FataFavian) | Project Lead & CNC Engine Logic (3D Lathe Simulator Engine, G-Code Parser & Machine Kinematics) |
+| **Fazrin Mauza** | [@zrinfa](https://github.com/zrinfa) • [@fazrin](https://github.com/fazrin) | Fullstack & Cloud Engineer, AI Tutor & Assistant (Google Gemini API), serta Arsitektur LMS & Database Firestore |
+| **Farrell Ahmed Dimitrie Dhiaul Aulia** | [@meddmt2018](https://github.com/meddmt2018) | System Analyst & Technical Documentation, Penyusunan Diagram Sistem (Arsitektur, Use Case, Activity, & ERD Database) |
+| **Iqbal** | [@Nyamukgila24](https://github.com/Nyamukgila24) | UI/UX Designer, Perancangan Antarmuka & Prototipe Sistem di [Figma](https://www.figma.com/design/OJGeJZ9ehdHRGzSVQWqXSU/SICNC?node-id=0-1&t=rYq5g6GkaJUVBlLT-1) |
 
 ---
 
