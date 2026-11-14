@@ -8,6 +8,7 @@ import { api } from '../api';
 import { useRoute } from '../router';
 import { useSession } from '../session';
 import Icon from '../ui/Icon.jsx';
+import MarkdownView from '../ui/MarkdownView.jsx';
 import studentMascot from '../assets/cncbot-character.png';
 import teacherMascot from '../assets/teacherbot-character.png';
 import studentAvatar from '../assets/cncbot-avatar.jpg';
@@ -263,7 +264,9 @@ export default function CncBotWidget() {
                   />
                 )}
                 <div className="cncbot__msg-wrap">
-                  <div className="cncbot__msg-text">{m.text}</div>
+                  <div className="cncbot__msg-text">
+                    <MarkdownView content={m.text} />
+                  </div>
                   {m.role === 'bot' && (
                     <button
                       type="button"

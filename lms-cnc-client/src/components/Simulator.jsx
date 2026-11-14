@@ -7,6 +7,7 @@ import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 
 import { api, autoScore, compareTarget, highlightGcode, parseGCode, simulate } from '../api';
 import Simulator2D from './Simulator2D';
 import Icon from '../ui/Icon.jsx';
+import MarkdownView from '../ui/MarkdownView.jsx';
 import { Alert, Button, Field, Input, Modal, toast } from '../ui/primitives.jsx';
 
 // Three.js dimuat terpisah: pengguna mode 2D tidak mengunduh chunk 3D.
@@ -823,7 +824,13 @@ export default function Simulator({
           {!theater && tutor && (
             <div className="tutor">
               <b>CNC-Bot <span className="dim">({tutor.source}){isTugas && (tutor.skor != null || shownScore != null) ? ` • skor ${tutor.skor ?? shownScore}/100` : ''}</span></b>
-              <ul>{tutor.feedback.map((t, i) => <li key={i} style={{ whiteSpace: 'pre-line' }}>{t}</li>)}</ul>
+              <div className="tutor-feedback-list">
+                {tutor.feedback.map((t, i) => (
+                  <div key={i} className="tutor-feedback-item">
+                    <MarkdownView content={t} />
+                  </div>
+                ))}
+              </div>
               {tutor.rekomendasi && (
                 <button className="sec" onClick={() => onRekomendasi?.(tutor.rekomendasi.modul_id)}>
                   Modul berikutnya: Lv.{tutor.rekomendasi.level} {tutor.rekomendasi.judul}
