@@ -1,4 +1,4 @@
-# SiNC: LMS Simulator Bubut CNC
+# SiNC: Simulator Bubut CNC
 
 <p align="center">
   <strong>Belajar Pemrograman CNC melalui Simulasi Interaktif dan Pendampingan Digital</strong>
