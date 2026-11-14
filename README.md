@@ -96,7 +96,55 @@ flowchart LR
 
 ---
 
-## 6. Alur Penggunaan & Pemodelan Sistem
+## 6. Spesifikasi Kebutuhan Perangkat Lunak (SRS)
+
+Sebagai acuan rekayasa perangkat lunak yang terukur, berstandar industri (IEEE 830), dan selaras dengan Use Case Diagram, perancangan platform SiNC mencakup spesifikasi kebutuhan fungsional dan non-fungsional sebagai berikut:
+
+### 6.1 Kebutuhan Fungsional (Functional Requirements)
+
+| Kode Kebutuhan | Modul / Aktor | Deskripsi Kebutuhan Fungsional |
+|---|---|---|
+| **FR-AUTH-01** | Autentikasi | Sistem menyediakan autentikasi multi-peran (**Administrator**, **Guru Pengampu**, dan **Siswa**) berbasis Firebase Authentication dan Google Sign-In. |
+| **FR-AUTH-02** | Autentikasi | Sistem menyediakan fitur *One-Click Demo Access* pada halaman login untuk pengujian instan oleh juri/evaluator tanpa perlu registrasi awal. |
+| **FR-AUTH-03** | Hak Akses | Sistem menerapkan kontrol akses deklaratif berbasis peran (*Role-Based Access Control*) melalui *Firestore Security Rules*. |
+| **FR-SIM-01** | Simulator 2D | Sistem menyediakan editor G-Code dengan penyorotan sintaks (*syntax highlighting*) dan pelacak blok eksekusi real-time. |
+| **FR-SIM-02** | Mesin G-Code | Parser mendukung perintah standar bubut CNC: `G00` (rapid positioning), `G01` (linear feed), `G02`/`G03` (circular interpolation), serta mode koordinat `G90` (absolut) dan `G91` (inkremental). |
+| **FR-SIM-03** | Anti-Crash Alarm | Sistem mendeteksi tabrakan pahat (*crash*) secara otomatis: pergerakan cepat (`G00`) memotong material, tabrakan rahang cekam chuck (`-Z > stockL`), serta memicu status ALARM seketika. |
+| **FR-SIM-04** | Simulator 3D | Sistem melakukan transisi visual mulus (*cinematic zoom-out*) dari panel kontrol 2D ke mesin 3D interaktif Three.js saat tombol *Cycle Start* ditekan. |
+| **FR-SIM-05** | Visualisasi 3D | Simulator 3D merender animasi pemakanan logam secara inkremental, putaran chuck spindle, semprotan cairan pendingin (*coolant*), dan partikel percikan geram (*sparks*). |
+| **FR-SIM-06** | Inspeksi Benda | Sistem menyediakan pratinjau 3D benda kerja mandiri (*Standalone Workpiece*) serta rotasi orbit 360° untuk memeriksa kehalusan permukaan dan dimensi kontur. |
+| **FR-SIM-07** | Mode Bebas | Sistem menyediakan **Simulator Bebas (Sandbox)** tanpa penilaian skor untuk sarana eksplorasi mandiri dengan ukuran stock kustom. |
+| **FR-SIM-08** | Evaluasi Toleransi | Sistem menghitung akurasi dimensi benda kerja hasil eksekusi kode terhadap target jobsheet secara otomatis (skala 0–100) berdasarkan batas toleransi presisi. |
+| **FR-LMS-01** | Kelas & Rombel | Guru dapat membuat rombel kelas dengan kode unik, mengelola daftar siswa, dan membagikan materi ajar. |
+| **FR-LMS-02** | Penugasan | Guru dapat menyusun tugas jobsheet praktik (menentukan starter G-code, dimensi target, bobot nilai, batas lulus, dan tenggat waktu). |
+| **FR-LMS-03** | Berkas LKPD | Guru dapat mengunggah berkas LKPD/jobsheet format PDF langsung ke Firebase Storage yang dapat diunduh oleh siswa. |
+| **FR-LMS-04** | Pengumpulan Tugas| Siswa dapat mengerjakan tugas praktikum di simulator dan mengirimkan hasil eksekusi program beserta histori percobaan (*attempts*). |
+| **FR-LMS-05** | Penilaian & Rekap | Guru dapat meninjau kiriman program siswa, memberikan feedback kualitatif, dan mengekspor rekapitulasi nilai satu kelas ke berkas CSV. |
+| **FR-LMS-06** | Lemari Program | Siswa memiliki ruang penyimpanan cloud pribadi (*Lemari Program*) untuk menyimpan draf dan variasi G-Code secara mandiri. |
+| **FR-AI-01** | AI Tutor Siswa | Siswa dapat berkonsultasi dengan asisten cerdas **CNC-Bot** (Google Gemini 3.5 Flash-Lite) yang memberikan bimbingan metode Sokratik tanpa memberi contekan langsung. |
+| **FR-AI-02** | AI Asisten Guru | Guru dapat memanfaatkan **TeacherBot** bertenaga Gemini AI untuk merancang variasi soal, jobsheet, dan skenario pengajaran CNC. |
+
+### 6.2 Kebutuhan Non-Fungsional (Non-Functional Requirements)
+
+| Parameter | Kode | Spesifikasi & Tolok Ukur Kebutuhan Non-Fungsional |
+|---|---|---|
+| **Performa (Performance)** | **NFR-PERF-01** | Waktu inisialisasi awal aplikasi (*First Contentful Paint*) di bawah 2 detik pada koneksi internet standar (10 Mbps). |
+| | **NFR-PERF-02** | Render animasi 3D Three.js mempertahankan frame rate stabil minimal 45–60 FPS pada laptop ber-GPU terintegrasi (*integrated GPU*) melalui teknik *smart render loop* dan *pixel ratio throttling* (1.0–1.25). |
+| | **NFR-PERF-03** | Parser dan deteksi tabrakan G-Code dieksekusi 100% di sisi klien (*client-side*) dengan waktu komputasi < 50 ms untuk 500 baris kode tanpa latensi jaringan server. |
+| **Kebergunaan (Usability)** | **NFR-USE-01** | Antarmuka mengimplementasikan **Dual Mode (Light Blueprint & Dark Cockpit)** dengan rasio kontras 60:30:10 yang memenuhi standar aksesibilitas WCAG 2.1 Level AA. |
+| | **NFR-USE-02** | Tata letak panel kontrol mengadopsi standar kontroler industri nyata (GreaMaT) untuk menjamin transfer keterampilan (*transfer of learning*) yang otentik ke mesin fisik. |
+| | **NFR-USE-03** | Desain sepenuhnya responsif (*fluid layout*) yang dapat diakses dengan baik melalui laptop, desktop, maupun tablet layar sentuh. |
+| **Keandalan (Reliability)** | **NFR-REL-01** | Mengadopsi arsitektur *Full Serverless* (Firebase & GitHub Pages) dengan jaminan ketersediaan tinggi (*uptime* > 99.9%) tanpa risiko *single point of failure* server fisik lokal. |
+| | **NFR-REL-02** | Preferensi pengguna (tema tampilan dan status sesi login) tersimpan persisten secara aman di `localStorage` peramban. |
+| **Keamanan (Security)** | **NFR-SEC-01** | Seluruh transmisi data dienkripsi menggunakan protokol HTTPS / TLS 1.3 standar industri. |
+| | **NFR-SEC-02** | Hak akses dokumen dilindungi secara ketat di sisi server via *Firestore Security Rules*, mencegah manipulasi nilai atau akses data lintas rombel secara ilegal. |
+| | **NFR-SEC-03** | Parser G-Code menerapkan validasi dan sanitasi ketat untuk mencegah injeksi karakter ilegal (*code injection*). |
+| **Portabilitas & Kompatibilitas** | **NFR-PORT-01** | Kompatibel penuh dengan seluruh peramban modern yang mendukung WebGL (Google Chrome v90+, Microsoft Edge v90+, Mozilla Firefox v88+, Safari v14+). |
+| | **NFR-PORT-02** | *Zero Installation*: Pengguna tidak memerlukan instalasi driver, runtime khusus, atau plugin tambahan apa pun di komputer mereka. |
+
+---
+
+## 7. Alur Penggunaan & Pemodelan Sistem
 
 ```mermaid
 flowchart LR
@@ -111,19 +159,19 @@ flowchart LR
     H --> I
 ```
 
-### 6.1 Use Case Diagram (Interaksi Hak Akses Antara Aktor)
+### 7.1 Use Case Diagram (Interaksi Hak Akses Antara Aktor)
 Diagram berikut memetakan pembagian wewenang dan interaksi fungsional antara Administrator, Guru Kejuruan, dan Siswa SMK dalam ekosistem platform SiNC:
 
 ![Use Case Diagram SiNC](docs/images/diagrams/use-case-diagram.svg)
 
-### 6.2 Activity Diagram (Alur Eksekusi G-Code & Evaluasi Otomatis)
+### 7.2 Activity Diagram (Alur Eksekusi G-Code & Evaluasi Otomatis)
 Diagram aktivitas berikut memvisualisasikan perjalanan komputasi dari saat siswa menginput perintah G-Code pada panel kontrol 2D, validasi tabrakan (rapid collision dan chuck collision), transisi panggung 3D Three.js, bimbingan AI Tutor Sokratik, hingga penilaian toleransi di cloud:
 
 ![Activity Diagram Simulasi G-Code SiNC](docs/images/diagrams/activity-diagram.svg)
 
 ---
 
-## 7. Desain & Dokumentasi Visual
+## 8. Desain & Dokumentasi Visual
 
 ### Acuan dan Referensi Perancangan Mesin & Kontroler
 
@@ -149,7 +197,7 @@ Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi pal
 
 ---
 
-## 8. Stack Teknologi
+## 9. Stack Teknologi
 
 | Komponen | Teknologi | Peran & Keterangan |
 |---|---|---|
@@ -165,7 +213,7 @@ Antarmuka pengguna mengadopsi estetika *modern liquid glass* dengan proporsi pal
 
 ---
 
-## 9. Arsitektur Serverless Modern
+## 10. Arsitektur Serverless Modern
 
 Aplikasi ini telah dimigrasikan dari arsitektur monolitik (PHP + MySQL + cPanel) menjadi **Full Serverless Single Page Application (SPA)** yang modern, ringan, tangguh, scalable, dan bebas biaya pemeliharaan server.
 
@@ -198,14 +246,14 @@ Aplikasi ini telah dimigrasikan dari arsitektur monolitik (PHP + MySQL + cPanel)
 3. **Client-Side Simulation Parity**: Seluruh kalkulasi koordinat G-Code, deteksi tabrakan (rapid collision, chuck hit), dan evaluasi toleransi profil dieksekusi 100% di browser tanpa latensi jaringan.
 4. **AI Asisten Real-time**: Menggunakan **Google Gemini 3.5 Flash-Lite** secara serverless untuk memberikan bimbingan interaktif kepada siswa dan guru.
 
-### 9.2 Diagram Relasi Entitas Data (Database ERD)
+### 10.2 Diagram Relasi Entitas Data (Database ERD)
 Meskipun menggunakan basis data NoSQL Cloud Firestore, relasi logis antar koleksi dokumen tetap dirancang dengan integritas data referensial yang ketat untuk menjamin keamanan hak akses akademik (*Firestore Security Rules*):
 
 ![Entity Relationship Diagram SiNC](docs/images/diagrams/database-erd.svg)
 
 ---
 
-## 10. Struktur Direktori Repositori
+## 11. Struktur Direktori Repositori
 
 ```text
 SiNC/
@@ -222,10 +270,7 @@ SiNC/
 │   │       ├── references.md
 │   │       ├── referensi control panel cnc.jpeg
 │   │       └── referensi mesin cnc gremat sth6166.webp
-│   ├── system-architecture.svg # Diagram arsitektur sistem putih bersih
-│   ├── simulator-panel.png     # Cuplikan antarmuka panel kontrol 2D
-│   ├── simulator-3d.png        # Cuplikan simulator mesin 3D layar penuh
-│   └── simulator-3d-detail.png # Detail pahat, coolant, dan pencekam
+│   └── system-architecture.svg # Diagram arsitektur sistem putih bersih
 ├── firestore.rules             # Aturan keamanan database Cloud Firestore
 ├── storage.rules               # Aturan keamanan akses berkas Firebase Storage
 ├── lms-cnc-client/             # Aplikasi frontend SPA (React + Three.js)
@@ -247,7 +292,7 @@ SiNC/
 
 ---
 
-## 11. Menjalankan Aplikasi secara Lokal
+## 12. Menjalankan Aplikasi secara Lokal
 
 ### Prasyarat
 - **Node.js (v18+)** dan **npm**
@@ -278,7 +323,7 @@ SiNC/
 
 ---
 
-## 12. Akun Demo (One-Click Login)
+## 13. Akun Demo (One-Click Login)
 
 Di halaman login telah disediakan tombol instan untuk mengakses berbagai peran:
 
@@ -291,7 +336,7 @@ Di halaman login telah disediakan tombol instan untuk mengakses berbagai peran:
 
 ---
 
-## 13. Atribusi, Hak Cipta, dan Transparansi AI
+## 14. Atribusi, Hak Cipta, dan Transparansi AI
 
 ### Atribusi Hak Cipta Mesin Acuan
 - Nama merek dan desain fisik mesin bubut **Gremat STH6166** merupakan hak kekayaan intelektual dari produsen terkait.
@@ -306,7 +351,7 @@ Sesuai dengan komitmen orisinalitas dan etika kompetisi:
 
 ---
 
-## 14. Batasan dan Rencana Pengembangan (Roadmap)
+## 15. Batasan dan Rencana Pengembangan (Roadmap)
 
 ### Batasan MVP Saat Ini
 - Simulator berfokus pada **Mesin Bubut CNC 2-Sumbu (2-Axis Lathe)** pada bidang koordinat X dan Z.
@@ -322,7 +367,7 @@ Sesuai dengan komitmen orisinalitas dan etika kompetisi:
 
 ---
 
-## 15. Tim Pengembang (Development Team)
+## 16. Tim Pengembang (Development Team)
 
 | Nama Anggota | Akun GitHub | Peran & Tanggung Jawab Utama |
 |---|---|---|
@@ -333,7 +378,7 @@ Sesuai dengan komitmen orisinalitas dan etika kompetisi:
 
 ---
 
-## 16. Informasi Kompetisi
+## 17. Informasi Kompetisi
 
 Proyek ini diajukan untuk mengikuti **LOGICODIX 2026 - Hackathon Competition**:
 
@@ -343,11 +388,24 @@ Proyek ini diajukan untuk mengikuti **LOGICODIX 2026 - Hackathon Competition**:
 
 ---
 
----
+## 18. Lisensi & Deklarasi Orisinalitas (License & Originality)
 
-## 17. Lisensi (License)
+### Deklarasi Orisinalitas Karya
+Seluruh ide, konsep pedagogis, rancang bangun arsitektur sistem serverless, antarmuka visual liquid glass, pemodelan mesin bubut CNC 3D interaktif, serta integrasi AI Sokratik dalam platform **SiNC** merupakan **karya orisinal yang digagas dan dikembangkan bersama oleh tim pengembang** dalam rangka berpartisipasi pada kompetisi **LOGICODIX 2026** (subtema *Smart & Fun Education*).
 
-Proyek ini didistribusikan di bawah lisensi terbuka **MIT License**. Lihat berkas [LICENSE](LICENSE) untuk ketentuan lengkap penggunaan, modifikasi, dan atribusi.
+### Lisensi Terbuka (Open Source MIT License)
+Proyek ini didistribusikan secara terbuka di bawah naungan **[MIT License](LICENSE)**:
+
+> **Copyright (c) 2026 Fata Favian & SiNC Development Team**
+
+**Tujuan Pemilihan Lisensi MIT:**
+1. **Adopsi Riil dan Gratis untuk Pendidikan**: Membuka kesempatan seluas-luasnya bagi sekolah menengah kejuruan (SMK), politeknik vokasi, balai latihan kerja (BLK), serta praktisi guru teknik pemesinan di seluruh Indonesia untuk mengadopsi dan memanfaatkan SiNC sebagai media pembelajaran gratis tanpa beban biaya lisensi komersial.
+2. **Pengembangan Berkelanjutan (Open Innovation)**: Membuka ruang bagi komunitas pengembang perangkat lunak dan akademisi untuk memperkaya fitur, memperluas modul pembelajaran G-Code, serta mengintegrasikan model mesin bubut lainnya secara kolaboratif.
+3. **Penerapan Nyata di Dunia Pendidikan**: Menghilangkan kesenjangan fasilitas fisik permesinan di sekolah sehingga seluruh siswa kejuruan dapat berlatih secara terampil, aman, dan percaya diri sebelum mengoperasikan mesin industri nyata.
+
+### Atribusi Aset & Musik Pengiring (Audio Attribution)
+- **Musik Latar Video Demo**: *Carefree* oleh Kevin MacLeod (incompetech.com).  
+  Dilisensikan di bawah *Creative Commons: By Attribution 3.0 License*.
 
 ---
 
