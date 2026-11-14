@@ -1,5 +1,5 @@
 // =============================================================
-// mockApi.js — server mock dev otomatis untuk Vite.
+// mockApi.js - server mock dev otomatis untuk Vite.
 // Memungkinkan login demo (admin, guru, siswa) dan pengujian fitur
 // secara lokal langsung di browser tanpa perlu server PHP/MySQL.
 // =============================================================

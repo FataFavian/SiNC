@@ -85,7 +85,7 @@ export default function Login() {
         </div>
 
         <h2 className="auth__hero-title">
-          Belajar pemrograman bubut CNC sampai <span className="auth__hero-accent">benar–benar terampil.</span>
+          Belajar pemrograman bubut CNC sampai <span className="auth__hero-accent">benar-benar terampil.</span>
         </h2>
         <p className="auth__hero-sub">
           Simulator bubut CNC berbasis web dengan LMS ringan dan AI Tutor untuk pembelajaran G-Code.

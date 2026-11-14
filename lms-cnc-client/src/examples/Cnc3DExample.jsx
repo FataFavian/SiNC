@@ -1,5 +1,5 @@
 // =============================================================
-// Cnc3DExample.jsx — Simulator Bebas CNC 3D (Mode Demo Publik).
+// Cnc3DExample.jsx - Simulator Bebas CNC 3D (Mode Demo Publik).
 // Dibuka tanpa login di /?demo=3d.
 // Menggunakan layout yang sama persis dengan Simulator Bebas di role siswa:
 // Editor G-Code + Pratinjau Benda Kerja 3D Real-time, tanpa tombol lemari program.

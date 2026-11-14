@@ -17,7 +17,12 @@
 
 Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** yang menggabungkan kelas virtual, simulator mesin bubut CNC 3D interaktif, dan asisten cerdas **Google Gemini AI**.
 
-🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)
+🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)  
+🎬 **Video Demonstrasi Fitur (Walkthrough):** [docs/demo-sinc.mp4](docs/demo-sinc.mp4)
+
+<video src="docs/demo-sinc.mp4" controls="controls" width="100%" style="max-width: 100%; border-radius: 8px;">
+  <p>Browser Anda tidak mendukung tag video HTML5. Silakan tonton atau unduh video demonstrasi melalui tautan berkas: <a href="docs/demo-sinc.mp4"><strong>docs/demo-sinc.mp4</strong></a>.</p>
+</video>
 
 ![Panel kontrol simulator saat menyusun program](docs/simulator-panel.png)
 
@@ -223,6 +228,7 @@ SiNC/
 │   │       ├── referensi control panel cnc.jpeg
 │   │       └── referensi mesin cnc gremat sth6166.webp
 │   ├── system-architecture.svg # Diagram arsitektur sistem putih bersih
+│   ├── demo-sinc.mp4           # Rekaman demonstrasi fitur interaktif (walkthrough)
 │   ├── simulator-panel.png     # Cuplikan antarmuka panel kontrol 2D
 │   ├── simulator-3d.png        # Cuplikan simulator mesin 3D layar penuh
 │   └── simulator-3d-detail.png # Detail pahat, coolant, dan pencekam
@@ -343,11 +349,20 @@ Proyek ini diajukan untuk mengikuti **LOGICODIX 2026 - Hackathon Competition**:
 
 ---
 
----
+## 17. Lisensi & Deklarasi Orisinalitas (License & Originality)
 
-## 17. Lisensi (License)
+### Deklarasi Orisinalitas Karya
+Seluruh ide, konsep pedagogis, rancang bangun arsitektur sistem serverless, antarmuka visual liquid glass, pemodelan mesin bubut CNC 3D interaktif, serta integrasi AI Sokratik dalam platform **SiNC** merupakan **karya orisinal yang digagas dan dikembangkan bersama oleh tim pengembang** dalam rangka berpartisipasi pada kompetisi **LOGICODIX 2026** (subtema *Smart & Fun Education*).
 
-Proyek ini didistribusikan di bawah lisensi terbuka **MIT License**. Lihat berkas [LICENSE](LICENSE) untuk ketentuan lengkap penggunaan, modifikasi, dan atribusi.
+### Lisensi Terbuka (Open Source MIT License)
+Proyek ini didistribusikan secara terbuka di bawah naungan **[MIT License](LICENSE)**:
+
+> **Copyright (c) 2026 Fata Favian & SiNC Development Team**
+
+**Tujuan Pemilihan Lisensi MIT:**
+1. **Adopsi Riil dan Gratis untuk Pendidikan**: Membuka kesempatan seluas-luasnya bagi sekolah menengah kejuruan (SMK), politeknik vokasi, balai latihan kerja (BLK), serta praktisi guru teknik pemesinan di seluruh Indonesia untuk mengadopsi dan memanfaatkan SiNC sebagai media pembelajaran gratis tanpa beban biaya lisensi komersial.
+2. **Pengembangan Berkelanjutan (Open Innovation)**: Membuka ruang bagi komunitas pengembang perangkat lunak dan akademisi untuk memperkaya fitur, memperluas modul pembelajaran G-Code, serta mengintegrasikan model mesin bubut lainnya secara kolaboratif.
+3. **Penerapan Nyata di Dunia Pendidikan**: Menghilangkan kesenjangan fasilitas fisik permesinan di sekolah sehingga seluruh siswa kejuruan dapat berlatih secara terampil, aman, dan percaya diri sebelum mengoperasikan mesin industri nyata.
 
 ---
 
