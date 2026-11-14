@@ -118,7 +118,7 @@ Sebagai acuan rekayasa perangkat lunak yang terukur, berstandar industri (IEEE 8
 | **FR-SIM-05** | Visualisasi 3D | Simulator 3D merender animasi pemakanan logam secara inkremental, putaran chuck spindle, semprotan cairan pendingin (*coolant*), dan partikel percikan geram (*sparks*). |
 | **FR-SIM-06** | Inspeksi Benda | Sistem menyediakan pratinjau 3D benda kerja mandiri (*Standalone Workpiece*) serta rotasi orbit 360° untuk memeriksa kehalusan permukaan dan dimensi kontur. |
 | **FR-SIM-07** | Mode Bebas | Sistem menyediakan **Simulator Bebas (Sandbox)** tanpa penilaian skor untuk sarana eksplorasi mandiri dengan ukuran stock kustom. |
-| **FR-SIM-08** | Evaluasi Toleransi | Sistem menghitung akurasi dimensi benda kerja hasil eksekusi kode terhadap target jobsheet secara otomatis (skala 0–100) berdasarkan batas toleransi presisi. |
+| **FR-SIM-08** | Evaluasi Toleransi | Sistem menghitung akurasi dimensi benda kerja hasil eksekusi kode terhadap target jobsheet secara otomatis (skala 0-100) berdasarkan batas toleransi presisi. |
 | **FR-LMS-01** | Kelas & Rombel | Guru dapat membuat rombel kelas dengan kode unik, mengelola daftar siswa, dan membagikan materi ajar. |
 | **FR-LMS-02** | Penugasan | Guru dapat menyusun tugas jobsheet praktik (menentukan starter G-code, dimensi target, bobot nilai, batas lulus, dan tenggat waktu). |
 | **FR-LMS-03** | Berkas LKPD | Guru dapat mengunggah berkas LKPD/jobsheet format PDF langsung ke Firebase Storage yang dapat diunduh oleh siswa. |
@@ -133,7 +133,7 @@ Sebagai acuan rekayasa perangkat lunak yang terukur, berstandar industri (IEEE 8
 | Parameter | Kode | Spesifikasi & Tolok Ukur Kebutuhan Non-Fungsional |
 |---|---|---|
 | **Performa (Performance)** | **NFR-PERF-01** | Waktu inisialisasi awal aplikasi (*First Contentful Paint*) di bawah 2 detik pada koneksi internet standar (10 Mbps). |
-| | **NFR-PERF-02** | Render animasi 3D Three.js mempertahankan frame rate stabil minimal 45–60 FPS pada laptop ber-GPU terintegrasi (*integrated GPU*) melalui teknik *smart render loop* dan *pixel ratio throttling* (1.0–1.25). |
+| | **NFR-PERF-02** | Render animasi 3D Three.js mempertahankan frame rate stabil minimal 45-60 FPS pada laptop ber-GPU terintegrasi (*integrated GPU*) melalui teknik *smart render loop* dan *pixel ratio throttling* (1.0-1.25). |
 | | **NFR-PERF-03** | Parser dan deteksi tabrakan G-Code dieksekusi 100% di sisi klien (*client-side*) dengan waktu komputasi < 50 ms untuk 500 baris kode tanpa latensi jaringan server. |
 | **Kebergunaan (Usability)** | **NFR-USE-01** | Antarmuka mengimplementasikan **Dual Mode (Light Blueprint & Dark Cockpit)** dengan rasio kontras 60:30:10 yang memenuhi standar aksesibilitas WCAG 2.1 Level AA. |
 | | **NFR-USE-02** | Tata letak panel kontrol mengadopsi standar kontroler industri nyata (GreaMaT) untuk menjamin transfer keterampilan (*transfer of learning*) yang otentik ke mesin fisik. |
