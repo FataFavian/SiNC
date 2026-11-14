@@ -93,6 +93,32 @@ export default function TaskBuilder({ id, kelasId }) {
     })));
   }, [asli.data]);
 
+  // Isi formulir jika ada draf yang dibawa dari Simulator Bebas Guru
+  useEffect(() => {
+    if (!id) {
+      try {
+        const raw = sessionStorage.getItem('sinc_draft_task_sim');
+        if (raw) {
+          const draft = JSON.parse(raw);
+          sessionStorage.removeItem('sinc_draft_task_sim');
+          setForm((f) => ({
+            ...f,
+            judul: draft.judul || f.judul || 'Tugas Praktik Bubut CNC Baru',
+            starter_gcode: draft.starter_gcode || f.starter_gcode,
+            target: {
+              ...f.target,
+              stock_d: draft.stock_d || f.target.stock_d,
+              stock_l: draft.stock_l || f.target.stock_l,
+              target_d: draft.target_d || f.target.target_d,
+              target_z: draft.target_z || f.target.target_z,
+            },
+          }));
+          toast('Konfigurasi G-Code & stock dari Simulator Bebas berhasil dimuat!');
+        }
+      } catch (_) {}
+    }
+  }, [id]);
+
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
   const setTarget = (k) => (e) => setForm({ ...form, target: { ...form.target, [k]: e.target.value } });
   const rombelTerpilih = (kelas.data || []).find((k) => k.id === form.kelas_id);

@@ -121,7 +121,7 @@ export function simulate(instructions, stockD, stockL) {
   const moves = [], events = [];
   let hasMode = false, first = true;
   const idx = (zv) => Math.max(0, Math.min(steps - 1, Math.round(-zv / RES)));
-  const chuckHit = (px, pz) => -pz < -1e-9 && px / 2 < stockR + 1 - 1e-9;
+  const chuckHit = (px, pz) => (-pz < -1e-9 && px / 2 < stockR + 1 - 1e-9) || (-pz > stockL - 0.5);
 
   for (const ins of instructions) {
     const g = ins.G;
@@ -144,7 +144,14 @@ export function simulate(instructions, stockD, stockL) {
         for (let k = 1; k <= n; k++) {
           const qx = x + ((tX - x) * k) / n, qz = z + ((tZ - z) * k) / n;
           if (qx / 2 < profile[idx(qz)] - 0.05 || chuckHit(qx, qz)) {
-            events.push({ type: 'err', msg: `Baris "${ins.raw}": gerakan cepat (G00) menabrak material/chuck di Z≈${qz.toFixed(1)}.`, moveIndex: moves.length });
+            const isChuck = -qz > stockL - 0.5;
+            events.push({
+              type: 'err',
+              msg: isChuck
+                ? `Baris "${ins.raw}": ALARM! Gerakan cepat (G00) menabrak rahang cekam chuck di Z≈${qz.toFixed(1)}.`
+                : `Baris "${ins.raw}": gerakan cepat (G00) menabrak material/chuck di Z≈${qz.toFixed(1)}.`,
+              moveIndex: moves.length,
+            });
             break;
           }
         }
@@ -153,7 +160,16 @@ export function simulate(instructions, stockD, stockL) {
     } else if (g === 1) {
       if (ins.F === undefined) events.push({ type: 'warn', msg: `Baris "${ins.raw}": G01 tanpa F (feed rate).` });
       else if (ins.F > 2000) events.push({ type: 'warn', msg: `Baris "${ins.raw}": F${ins.F} berlebihan untuk bubut latihan.` });
-      if (chuckHit(tX, tZ)) events.push({ type: 'err', msg: `Baris "${ins.raw}": pahat masuk zona chuck (Z>0 di dalam material).`, moveIndex: moves.length });
+      if (chuckHit(tX, tZ)) {
+        const isChuck = -tZ > stockL - 0.5;
+        events.push({
+          type: 'err',
+          msg: isChuck
+            ? `Baris "${ins.raw}": ALARM! Pahat menabrak rahang cekam chuck di Z=${tZ} (melebihi panjang benda kerja ${stockL} mm).`
+            : `Baris "${ins.raw}": pahat masuk zona bahaya chuck (Z>0 di dalam material).`,
+          moveIndex: moves.length,
+        });
+      }
       applyCut(profile, x, z, tX, tZ);
       moves.push({ x1: x, z1: z, x2: tX, z2: tZ, rapid: false });
     } else {
@@ -185,10 +201,25 @@ export function simulate(instructions, stockD, stockL) {
 }
 
 export function compareTarget(profile, targetD, targetZ) {
-  const idx = Math.round(targetZ / RES);
-  if (idx >= profile.length) return { match: false, diff: null, detail: 'Target di luar panjang stock.' };
-  const got = profile[Math.max(0, idx - 1)], want = targetD / 2, diff = Math.abs(got - want);
-  return { match: diff <= TOL, diff: +diff.toFixed(2), detail: `Radius di Z≈${targetZ}mm: ${got.toFixed(2)}mm (target ${want}mm, toleransi ±${TOL}mm)` };
+  if (!targetD || !targetZ || !profile || !profile.length) {
+    return { match: false, diff: null, detail: 'Target tidak ditentukan.' };
+  }
+  const td = Number(targetD);
+  const tz = Number(targetZ);
+  if (Number.isNaN(td) || Number.isNaN(tz) || td <= 0 || tz <= 0) {
+    return { match: false, diff: null, detail: 'Target tidak valid.' };
+  }
+  const idx = Math.round(tz / RES);
+  if (idx >= profile.length || idx < 0) {
+    return { match: false, diff: null, detail: 'Target di luar panjang stock.' };
+  }
+  const got = profile[Math.max(0, idx - 1)];
+  if (got === undefined) {
+    return { match: false, diff: null, detail: 'Radius tidak terdefinisi.' };
+  }
+  const want = td / 2;
+  const diff = Math.abs(got - want);
+  return { match: diff <= TOL, diff: +diff.toFixed(2), detail: `Radius di Z≈${tz}mm: ${got.toFixed(2)}mm (target ${want}mm, toleransi ±${TOL}mm)` };
 }
 
 export function autoScore(events, cmp) {

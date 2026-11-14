@@ -264,17 +264,17 @@ INSERT IGNORE INTO modul_latihan (id, dibuat_oleh, judul, level, deskripsi, targ
  'Level 2: Pembubutan Tirus', 2,
  'Meniruskan stock Ø40 L60 menjadi Ø20 sepanjang 40 mm.',
  '{"stock_d":40,"stock_l":60,"target_d":20,"target_z":40}',
- 'G90\nG00 X40 Z0\nG01 X20 Z-40 F100\nG00 X50 Z5', NULL),
+ 'G90\nG00 X40 Z0\nG01 X20 Z-40 F100\nG00 X50\nG00 Z5\nM30', NULL),
 ('a0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111',
  'Level 3: Bertingkat (Step Turning)', 3,
  'Membuat 3 undakan: Ø40 → Ø30 → Ø20. Tarik pahat ke diameter aman sebelum memakai G00.',
  '{"stock_d":50,"stock_l":60,"target_d":20,"target_z":55}',
- 'G90\nG00 X50 Z0\nG01 X40 Z0 F100\nG01 X40 Z-15 F100\nG00 X50 Z-15', NULL),
+ 'G90\nG00 X50 Z0\nG01 X40 Z0 F100\nG01 X40 Z-15 F100\nG00 X50\nG00 Z5\nM30', NULL),
 ('a0000000-0000-0000-0000-000000000004', '11111111-1111-1111-1111-111111111111',
  'Level 4: Radius G02/G03', 4,
  'Membuat fillet radius 5 mm. Busur memakai I/K, yaitu I offset pusat searah X dalam radius mm dan K offset searah Z menjauhi chuck.',
- '{"stock_d":40,"stock_l":40,"target_d":30,"target_z":20}',
- 'G90\nG00 X40 Z0\nG01 X30 Z-15 F100\nG03 X20 Z-20 R5 F80\nG00 X50\nG00 Z5', NULL);
+ '{"stock_d":40,"stock_l":60,"target_d":30,"target_z":20}',
+ 'G90\nG00 X40 Z0\nG01 X30 Z-15 F100\nG03 X20 Z-20 R5 F80\nG00 X50\nG00 Z5\nM30', NULL);
 
 INSERT IGNORE INTO materi (id, kelas_id, judul, tipe, url, isi, urutan, dibuat_oleh) VALUES
 ('e0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001',

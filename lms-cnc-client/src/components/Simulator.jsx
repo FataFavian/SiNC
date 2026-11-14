@@ -1,19 +1,17 @@
 // =============================================================
-// Simulator.jsx - simulator utama: editor G-Code, skor, AI Tutor,
-// dan alur sinematik: panel 2D saat mengedit -> mesin 3D layar penuh
-// saat siklus dijalankan.  Tanpa tombol switch 3D/2D, otomatis.
-// Props: modul (latihan pustaka), submitTo (id tugas, kirim ke guru),
-// idModul (id modul asli untuk API; jangan diisi id sintetis).
+// Simulator.jsx - simulator utama bubut CNC: editor G-Code, pratinjau 3D
+// real-time, kontrol pemesinan ringkas (Animasi, Jalankan penuh, Kecepatan),
+// tombol bersihkan kode, dan AI Tutor CNC-Bot.
 // =============================================================
 import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { api, autoScore, compareTarget, highlightGcode, parseGCode, simulate } from '../api';
-import ControlPanel2D from './ControlPanel2D';
 import Simulator2D from './Simulator2D';
 import Icon from '../ui/Icon.jsx';
 import { Alert, Button, Field, Input, Modal, toast } from '../ui/primitives.jsx';
 
 // Three.js dimuat terpisah: pengguna mode 2D tidak mengunduh chunk 3D.
 const Simulator3D = lazy(() => import('./Simulator3D'));
+const StandaloneWorkpiece3D = lazy(() => import('./StandaloneWorkpiece3D'));
 
 function makeStarter(stockD = 30, stockL = 60) {
   const d = Math.round(stockD);
@@ -22,8 +20,6 @@ function makeStarter(stockD = 30, stockL = 60) {
   const cutZ = Math.max(15, Math.round(l * 0.7));
   return `G90\nG00 X${d} Z0\nG01 X${cutD} Z-${cutZ} F100\nG00 X${d + 10}\nG00 Z5`;
 }
-
-const STARTER = makeStarter(30, 60);
 
 class ViewportBoundary extends Component {
   constructor(props) {
@@ -49,24 +45,37 @@ function jam(waktu) {
 }
 
 export default function Simulator({
-  modul, submitTo, bolehSimpan = true, idModul = null, programId = null, programNama = '',
-  onSaved, onSubmit, onRekomendasi, initialStockD, initialStockL, onStockChange,
+  modul, submitTo, bolehSimpan = true, showTutor = false, idModul = null, programId = null, programNama = '',
+  onSaved, onSubmit, onRekomendasi, initialStockD, initialStockL, onStockChange, onGcodeChange,
 }) {
   const target = modul?.target || {
-    stock_d: initialStockD || 32,
+    stock_d: initialStockD || 30,
     stock_l: initialStockL || 60,
     target_d: 20,
     target_z: 40,
   };
-  const [customStockD, setCustomStockD] = useState(target.stock_d);
-  const [customStockL, setCustomStockL] = useState(target.stock_l);
+  const [customStockD, setCustomStockD] = useState(() => initialStockD || target.stock_d || 30);
+  const [customStockL, setCustomStockL] = useState(() => initialStockL || target.stock_l || 60);
 
+  // Hanya perbarui dimensi stok jika modul/latihan berganti ID ke modul lain
+  const lastModulIdRef = useRef(modul?.id);
   useEffect(() => {
-    if (modul?.target?.stock_d) setCustomStockD(+modul.target.stock_d);
-    else if (initialStockD) setCustomStockD(+initialStockD);
-    if (modul?.target?.stock_l) setCustomStockL(+modul.target.stock_l);
-    else if (initialStockL) setCustomStockL(+initialStockL);
-  }, [modul, initialStockD, initialStockL]);
+    const nextId = modul?.id;
+    if (nextId !== lastModulIdRef.current) {
+      lastModulIdRef.current = nextId;
+      if (modul?.target?.stock_d) setCustomStockD(+modul.target.stock_d);
+      if (modul?.target?.stock_l) setCustomStockL(+modul.target.stock_l);
+    }
+  }, [modul?.id, modul?.target?.stock_d, modul?.target?.stock_l]);
+
+  // Preload modul mesin 3D di latar belakang saat simulator dibuka
+  // sehingga ketika tombol 'Jalankan' ditekan, mesin 3D langsung siap seketika tanpa jeda loading
+  useEffect(() => {
+    const t = setTimeout(() => {
+      import('./Simulator3D').catch(() => {});
+    }, 200);
+    return () => clearTimeout(t);
+  }, []);
 
   const stockD = +customStockD;
   const stockL = +customStockL;
@@ -83,28 +92,44 @@ export default function Simulator({
 
   const [fallback, setFallback] = useState(false);
   const [fallbackNote, setFallbackNote] = useState('');
-  const [showToolpath, setShowToolpath] = useState(true);
-  const [transparent, setTransparent] = useState(false);
-  const [targetVisible, setTargetVisible] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [shot, setShot] = useState('panel');
   const [doorClosed, setDoorClosed] = useState(false);
   const [theater, setTheater] = useState(false);
+  const [hasCut, setHasCut] = useState(false);
 
   const playheadRef = useRef(0);
   const speedRef = useRef(1);
   const doorTimerRef = useRef(0);
+  const panelDelayRef = useRef(0);
+  const gutterRef = useRef(null);
+  const hlRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  const lines = useMemo(() => gcode.split('\n'), [gcode]);
+  const lineCount = lines.length;
+
+  const handleEditorScroll = (e) => {
+    const top = e.target.scrollTop;
+    const left = e.target.scrollLeft;
+    if (hlRef.current) {
+      hlRef.current.scrollTop = top;
+      hlRef.current.scrollLeft = left;
+    }
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = top;
+    }
+  };
   speedRef.current = speed;
 
-  // apakah sedang dalam mode 3D fullscreen (mesin tampil layar penuh)
-  const isRunView = shot === 'machine' && !fallback;
+  const isRunView = theater && !fallback;
 
   useEffect(() => () => {
     clearTimeout(doorTimerRef.current);
     clearTimeout(panelDelayRef.current);
   }, []);
 
-  // ganti modul → isi starter_gcode otomatis, reset
+  // Ganti modul → isi starter_gcode, reset
   useEffect(() => {
     setGcode(modul?.starter_gcode || makeStarter(target.stock_d, target.stock_l));
     setPlaying(false);
@@ -118,21 +143,40 @@ export default function Simulator({
     setShot('panel');
     setTheater(false);
     setDoorClosed(false);
-    setPanelReady(true);
+    setHasCut(false);
     clearTimeout(doorTimerRef.current);
     clearTimeout(panelDelayRef.current);
   }, [modul?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    onGcodeChange?.(gcode);
+  }, [gcode, onGcodeChange]);
+
   const sim = useMemo(() => {
     try {
-      const r = simulate(parseGCode(gcode), stockD, stockL);
-      const cmp = compareTarget(r.profile, +target.target_d, +target.target_z);
-      const { skor, ada_error } = autoScore(r.events, cmp);
-      return { ...r, cmp, skor, ada_error, match: !ada_error && cmp.match };
-    } catch {
+      const parsed = parseGCode(gcode);
+      const r = simulate(parsed, stockD, stockL);
+      const td = Number(target?.target_d) || 0;
+      const tz = Number(target?.target_z) || 0;
+      let cmp = null;
+      let scoreRes = { skor: 100, ada_error: false };
+      if (td > 0 && tz > 0) {
+        try {
+          cmp = compareTarget(r.profile, td, tz);
+          scoreRes = autoScore(r.events, cmp);
+        } catch {
+          cmp = null;
+        }
+      } else {
+        const hasErr = r.events.some((e) => e.type === 'err');
+        scoreRes = { skor: hasErr ? 0 : 100, ada_error: hasErr };
+      }
+      return { ...r, cmp, skor: scoreRes.skor, ada_error: scoreRes.ada_error, match: !scoreRes.ada_error && !!cmp?.match };
+    } catch (err) {
+      console.warn('Simulasi G-Code error:', err);
       return null;
     }
-  }, [gcode, stockD, stockL, target.target_d, target.target_z]);
+  }, [gcode, stockD, stockL, target?.target_d, target?.target_z]);
 
   const moves = sim?.moves || [];
   const errIdx = sim?.events.find((e) => e.type === 'err' && e.moveIndex !== undefined)?.moveIndex ?? -1;
@@ -148,7 +192,7 @@ export default function Simulator({
   const stopped = !playing && !crashed && !!result && step < stopAt && !doorClosed;
   const status = crashed ? 'ALARM' : playing ? 'AUTO' : paused ? 'PAUSE' : stopped ? 'STOP' : result ? 'SELESAI' : 'EDIT';
 
-  // loop playback memakai playhead pecahan → gerak pahat halus di 2D & 3D
+  // Loop playback animasi
   useEffect(() => {
     if (!playing || !sim || stopAt === 0) return;
     let last = performance.now();
@@ -159,14 +203,42 @@ export default function Simulator({
       setStep(stopAt);
       setPlaying(false);
       setResult({ events: sim.events, cmp: sim.cmp, skor: sim.skor, match: sim.match });
+      setHasCut(true);
       clearTimeout(doorTimerRef.current);
       if (errIdx < 0) {
         doorTimerRef.current = setTimeout(() => setDoorClosed(false), 900);
       }
+
+      // Notifikasi interaktif ke maskot AI CNC-Bot
+      if (errIdx >= 0) {
+        const errEvent = sim.events.find((e) => e.type === 'err');
+        const detailMsg = errEvent?.message || 'Pahat menabrak benda kerja pada lintasan cepat.';
+        window.dispatchEvent(new CustomEvent('cnc:bot-bubble', {
+          detail: {
+            type: 'crash',
+            text: `⚠️ Tabrakan terdeteksi! ${detailMsg} Periksa kembali koordinat pemotongan atau mundurkan pahat ya!`,
+            anim: 'think',
+          }
+        }));
+      } else {
+        const isMatch = sim.match;
+        const msg = isTugas
+          ? (isMatch
+            ? '🎉 Hebat sekali! Dimensi benda kerja sesuai target 100% dan pemotongan aman tanpa tabrakan!'
+            : '✨ Pemotongan selesai dengan aman tanpa tabrakan! Periksa ukuran diameter agar sesuai target tugas ya.')
+          : '✨ Keren! Pembubutan berjalan lancar dan 100% aman tanpa tabrakan. Benda kerja selesai dipotong!';
+        window.dispatchEvent(new CustomEvent('cnc:bot-bubble', {
+          detail: {
+            type: 'success',
+            text: msg,
+            anim: 'cheer',
+          }
+        }));
+      }
     }
 
     const loop = (now) => {
-      const dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
+      const dt = Math.max(0, Math.min(0.25, (now - last) / 1000));
       last = now;
       let ph = Math.max(0, playheadRef.current);
       if (ph >= stopAt - 1e-9) { finish(); return; }
@@ -174,8 +246,6 @@ export default function Simulator({
       const i = Math.min(Math.floor(ph), moves.length - 1);
       const m = moves[i];
       const len = Math.hypot(m.x2 - m.x1, m.z2 - m.z1);
-      // Durasi per gerakan (detik): diperlambat agar gerakan pemakanan pahat,
-      // percikan geram, dan semprotan coolant terlihat jelas & realistis
       const baseSpeed = m.rapid ? 30 : 12; // mm/detik
       const dur = Math.max(m.rapid ? 0.6 : 1.4, Math.min(m.rapid ? 2.0 : 4.8, len / baseSpeed));
 
@@ -195,10 +265,32 @@ export default function Simulator({
   const stop = () => {
     setPlaying(false);
     setDoorClosed(false);
+    if (step > 0) setHasCut(true);
   };
 
-  const play = () => {
-    if (!sim || stopAt === 0) return;
+  const handleJalankan = () => {
+    if (!sim) {
+      toast('Kode G-Code tidak valid atau format salah.', 'danger');
+      window.dispatchEvent(new CustomEvent('cnc:bot-bubble', {
+        detail: {
+          type: 'crash',
+          text: '⚠️ Format G-Code belum valid. Periksa kembali penulisan parameter X, Z, atau Feedrate (F) ya!',
+          anim: 'think',
+        }
+      }));
+      return;
+    }
+    if (stopAt === 0) {
+      toast('Tambahkan baris kode gerakan pemotongan (G00/G01/G02/G03).', 'warn');
+      window.dispatchEvent(new CustomEvent('cnc:bot-bubble', {
+        detail: {
+          type: 'warn',
+          text: '⚠️ Belum ada perintah gerakan pemotongan. Tambahkan baris kode gerak seperti G00 atau G01!',
+          anim: 'think',
+        }
+      }));
+      return;
+    }
     if (playing) {
       setPlaying(false);
       return;
@@ -218,67 +310,38 @@ export default function Simulator({
     setResult({ events: sim.events, cmp: sim.cmp, skor: sim.skor, match: sim.match });
     setPlaying(true);
   };
-
-  // full = tampilkan mesin 3D layar penuh (untuk "Jalankan penuh")
-  const seek = (n, full = false) => {
-    if (!sim) return;
-    setPlaying(false);
-    setDoorClosed(false);
-    if (full && !fallback) {
-      setTheater(true);
-      setShot('machine');
-    } else {
-      setTheater(false);
-      setShot('panel');
-      setPanelReady(true);
-      clearTimeout(panelDelayRef.current);
-    }
-    const ph = Math.max(0, Math.min(stopAt, n));
-    playheadRef.current = ph;
-    setStep(Math.floor(ph));
-    setResult(ph >= stopAt - 1e-9 && stopAt > 0
-      ? { events: sim.events, cmp: sim.cmp, skor: sim.skor, match: sim.match }
-      : null);
-  };
-
-  const stepBy = (dir) => {
-    const base = dir > 0
-      ? Math.floor(playheadRef.current) + 1
-      : Math.ceil(playheadRef.current) - 1;
-    seek(base);
-  };
-
-  // kembali ke mode edit: kamera zoom-in ke panel kontrol, lalu overlay panel 2D muncul mulus
-  const panelDelayRef = useRef(0);
-  const [panelReady, setPanelReady] = useState(true);
+  const play = handleJalankan;
 
   const returnToEdit = () => {
     setPlaying(false);
     setDoorClosed(false);
+    if (step > 0 || result) setHasCut(true);
     clearTimeout(doorTimerRef.current);
     clearTimeout(panelDelayRef.current);
-
-    // Tahap 1: Gerakkan kamera 3D zoom in ke arah kontrol panel fisik
-    // Tetap di theater view selama 900ms agar animasi kamera zoom-in terlihat jelas
-    setPanelReady(false);
     setShot('panel');
-
-    // Tahap 2: Tepat saat kamera tiba di panel, kembalikan ke layout editor
     panelDelayRef.current = setTimeout(() => {
       setTheater(false);
-      setPanelReady(true);
-    }, 900);
+    }, 850);
+  };
+
+  const resetWorkpiece = () => {
+    setHasCut(false);
+    setResult(null);
+    setStep(0);
+    playheadRef.current = 0;
+    setPlaying(false);
+    toast('Benda kerja di-reset ke bahan mentah. Ukuran stock dapat diubah kembali.');
   };
 
   const reset = () => {
     setPlaying(false);
+    setHasCut(false);
     playheadRef.current = 0;
     setStep(0);
     setResult(null);
     setShot('panel');
     setTheater(false);
     setDoorClosed(false);
-    setPanelReady(true);
     clearTimeout(doorTimerRef.current);
     clearTimeout(panelDelayRef.current);
   };
@@ -286,27 +349,29 @@ export default function Simulator({
   const changeGcode = (v) => {
     setGcode(v);
     setPlaying(false);
+    setHasCut(false);
     playheadRef.current = 0;
     setStep(0);
     setResult(null);
     setSaved(null);
     setKirim(null);
     setTutor(null);
-    setShot('panel');
     setDoorClosed(false);
-    setPanelReady(true);
     clearTimeout(doorTimerRef.current);
-    clearTimeout(panelDelayRef.current);
+  };
+
+  const clearGcode = () => {
+    changeGcode('');
+    toast('Editor G-Code telah dibersihkan.');
   };
 
   const on3DFail = (e) => {
     console.warn('3D tidak tersedia:', e?.message || e);
     setFallback(true);
-    setShot('panel');
     setFallbackNote('Visualisasi 3D tidak dapat dimuat di perangkat ini, tampilan 2D dipakai otomatis.');
   };
 
-  // kunci scroll + tombol Esc saat mesin tampil layar penuh
+  // Kunci scroll + tombol Esc saat mesin tampil layar penuh
   useEffect(() => {
     if (!isRunView) return undefined;
     document.body.classList.add('sim-theater');
@@ -402,7 +467,7 @@ export default function Simulator({
     : status === 'PAUSE' ? 'SIKLUS DIJEDA'
       : status === 'STOP' ? 'SIKLUS DIHENTIKAN'
         : status === 'ALARM' ? 'ALARM, SIKLUS DIHENTIKAN'
-          : status === 'SELESAI' ? 'SIKLUS SELESAI' : 'PRATINJAU MESIN';
+          : status === 'SELESAI' ? 'SIKLUS SELESAI' : 'PRATINJAU MESIN 3D';
   const runSub = status === 'AUTO' ? 'Pintu kaca tertutup • coolant menyemprot'
     : status === 'PAUSE' ? 'Siklus dijeda • pintu tetap tertutup'
       : status === 'STOP' ? 'Pintu kaca dibuka • tekan Lanjutkan untuk melanjutkan'
@@ -413,7 +478,6 @@ export default function Simulator({
 
   return (
     <div className={`card simulator-card${theater ? ' simulator-card--running' : ''}`}>
-      {/* Judul & deskripsi hanya saat bukan layar penuh / theater */}
       {!theater && (
         <>
           <h3>
@@ -432,43 +496,79 @@ export default function Simulator({
       )}
 
       <div className={`sim-grid${theater ? ' sim-grid--run' : ''}`}>
-        {/* ---------------- editor & kontrol (tetap stabil di kiri) ---------------- */}
+        {/* ---------------- Kolom Kiri: Editor G-Code & Kontrol ---------------- */}
         {!theater && (
-          <div>
-            <label>Editor G-Code (G00/G01/G02/G03/G90/G91)</label>
-            <div className="editor">
-              <pre className="hl" dangerouslySetInnerHTML={{ __html: hl + '\n' }} />
-              <textarea
-                value={gcode}
-                spellCheck={false}
-                onChange={(e) => changeGcode(e.target.value)}
-                onScroll={(e) => { e.target.previousSibling.scrollTop = e.target.scrollTop; }}
-                rows={13}
-              />
+          <div className="sim-col sim-col--editor">
+            <div className="sim-panel-head">
+              <div className="sim-panel-head__title">
+                <Icon name="code" size={15} />
+                <b>Editor G-Code</b>
+                <span className="sim-line-counter" title="Total baris program">
+                  {lineCount} baris
+                </span>
+                <span className="dim">(G00, G01, G02, G03, G90, G91)</span>
+              </div>
+              <div className="sim-live-indicator sim-live-indicator--control" title="Status Editor & Panel Kontrol CNC">
+                <span className="sim-live-dot" />
+                <span>Control Panel</span>
+              </div>
             </div>
 
-            <div className="row wrap">
-              <Button icon={playing ? 'pause' : 'play'} onClick={play}>{playing ? 'Jeda' : 'Animasi'}</Button>
-              <Button variant="sec" icon="stop" onClick={stop} disabled={!playing && !paused && status !== 'ALARM'}>Stop</Button>
-              <Button variant="sec" icon="maximize" onClick={() => seek(stopAt, true)} disabled={!stopAt}>Jalankan penuh</Button>
-              <Button variant="sec" icon="restart" onClick={reset}>Reset</Button>
+            <div className="editor editor--with-gutter">
+              <div className="editor__gutter" ref={gutterRef}>
+                {lines.map((_, i) => (
+                  <div key={i} className="editor__line-no">
+                    {String(i + 1).padStart(lineCount < 100 ? 2 : String(lineCount).length, '0')}
+                  </div>
+                ))}
+              </div>
+              <div className="editor__body">
+                <pre ref={hlRef} className="hl" dangerouslySetInnerHTML={{ __html: hl + '\n' }} />
+                <textarea
+                  ref={textareaRef}
+                  value={gcode}
+                  spellCheck={false}
+                  onChange={(e) => changeGcode(e.target.value)}
+                  onScroll={handleEditorScroll}
+                  rows={14}
+                  placeholder="Tulis kode G-Code di sini... (mis. G90, G00 X30 Z0, G01 X20 Z-30 F100)"
+                />
+              </div>
             </div>
 
-            <div className="row wrap">
-              <Button variant="sec" size="sm" icon="step-back" onClick={() => stepBy(-1)} disabled={step === 0}>Mundur</Button>
-              <span className="dim step-info">Langkah {step}/{moves.length}</span>
-              <Button variant="sec" size="sm" iconRight="step-forward" onClick={() => stepBy(1)} disabled={step >= stopAt}>Maju</Button>
-              <select
-                value={speed}
-                onChange={(e) => setSpeed(Number(e.target.value))}
-                style={{ width: 'auto', margin: 0 }}
-                title="Kecepatan animasi"
+            {/* Kontrol Utama: Jalankan (unified), Stop, Kecepatan, Bersihkan */}
+            <div className="sim-controls-bar">
+              <Button
+                icon={playing ? 'pause' : 'play'}
+                onClick={handleJalankan}
+                title="Jalankan simulasi pemotongan bubut CNC"
               >
-                <option value={0.5}>0,5×</option>
-                <option value={1}>1×</option>
-                <option value={2}>2×</option>
-                <option value={4}>4×</option>
-              </select>
+                {playing ? 'Jeda' : 'Jalankan'}
+              </Button>
+              <Button
+                variant="sec"
+                icon="stop"
+                onClick={stop}
+                disabled={!playing && !paused && status !== 'ALARM'}
+                title="Hentikan pemotongan"
+              >
+                Stop
+              </Button>
+              <div className="sim-speed-box" title="Kecepatan animasi simulasi">
+                <Icon name="bolt" size={13} />
+                <select
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                >
+                  <option value={0.5}>0,5×</option>
+                  <option value={1}>1×</option>
+                  <option value={2}>2×</option>
+                  <option value={4}>4×</option>
+                </select>
+              </div>
+              <Button variant="sec" icon="trash" onClick={clearGcode} title="Kosongkan seluruh kode di editor">
+                Bersihkan
+              </Button>
             </div>
 
             <div className="log">
@@ -484,26 +584,25 @@ export default function Simulator({
             {!isTugas && (result || saved) && (
               <div className={`score ${crashed ? 'nomatch' : 'match'}`}>
                 {crashed ? 'Pahat Menabrak Benda Kerja' : 'Simulasi Bebas: Eksekusi Aman'}
-                <div className="dim">{crashed ? 'Pahat menabrak benda kerja pada lintasan cepat.' : 'Simulator bebas tidak dinilai. Program aman tanpa tabrakan.'}</div>
+                <div className="dim">
+                  {crashed ? 'Pahat menabrak benda kerja pada lintasan cepat.' : 'Simulator bebas tidak dinilai. Program aman tanpa tabrakan.'}
+                </div>
               </div>
             )}
           </div>
         )}
 
-        {/* ---------------- panel kontrol / mesin 3D ---------------- */}
-        <div>
-          {/* Header */}
+        {/* ---------------- Kolom Kanan: Pratinjau Benda Kerja 3D Pure ---------------- */}
+        <div className="sim-col sim-col--preview">
           {!theater && (
-            <div className="view-head">
-              <div>
-                <b>Panel Kontrol & Mesin 3D</b>{' '}
-                <span className="dim">
-                  {fallback
-                    ? 'Tampilan 2D otomatis, visualisasi 3D tidak tersedia di perangkat ini.'
-                    : shot === 'machine'
-                      ? 'Kamera mengamati siklus mesin 3D. Klik "Kembali ke mode edit" untuk mengedit G-Code.'
-                      : 'Mode edit: panel kontrol aktif. Tekan "Animasi" untuk melihat pahat dan coolant memotong material.'}
-                </span>
+            <div className="sim-panel-head">
+              <div className="sim-panel-head__title">
+                <Icon name="cube" size={15} />
+                <b>Pratinjau Benda Kerja 3D</b>
+              </div>
+              <div className="sim-live-indicator" title="Pratinjau Geometri 3D Interaktif">
+                <span className="sim-live-dot" />
+                <span>3D Real-Time</span>
               </div>
             </div>
           )}
@@ -521,14 +620,77 @@ export default function Simulator({
                 <span className="dim">Tampilan 2D: potongan melintang, X = diameter.</span>
               </div>
             </>
+          ) : !theater ? (
+            <>
+              <Suspense fallback={<div className="vp3d-loading" style={{ height: 480 }}>Menyiapkan pratinjau benda kerja 3D…</div>}>
+                <StandaloneWorkpiece3D stockD={stockD} stockL={stockL} height={480} cutProfile={hasCut ? sim?.profile : null} />
+              </Suspense>
+
+              <div className="viewport-tools viewport-tools--stock">
+                <div className="stock-dim-group">
+                  <label className="stock-dim-select-wrap">
+                    <span>Diameter:</span>
+                    <select
+                      value={stockD}
+                      disabled={hasCut}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setCustomStockD(v);
+                        onStockChange?.(v, stockL);
+                      }}
+                      title={hasCut ? 'Tekan Reset untuk membuka kunci ukuran diameter' : 'Ubah diameter benda kerja (otomatis update 3D real-time)'}
+                    >
+                      <option value={20}>Ø 20 mm</option>
+                      <option value={25}>Ø 25 mm</option>
+                      <option value={30}>Ø 30 mm (Standar)</option>
+                      <option value={32}>Ø 32 mm</option>
+                      <option value={40}>Ø 40 mm</option>
+                      <option value={50}>Ø 50 mm</option>
+                    </select>
+                  </label>
+
+                  <label className="stock-dim-select-wrap">
+                    <span>Panjang:</span>
+                    <select
+                      value={stockL}
+                      disabled={hasCut}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setCustomStockL(v);
+                        onStockChange?.(stockD, v);
+                      }}
+                      title={hasCut ? 'Tekan Reset untuk membuka kunci ukuran panjang' : 'Ubah panjang benda kerja (otomatis update 3D real-time)'}
+                    >
+                      <option value={40}>P 40 mm</option>
+                      <option value={50}>P 50 mm</option>
+                      <option value={60}>P 60 mm (Standar)</option>
+                      <option value={80}>P 80 mm</option>
+                      <option value={100}>P 100 mm</option>
+                    </select>
+                  </label>
+
+                  {hasCut && (
+                    <button
+                      type="button"
+                      className="btn-stock-reset"
+                      onClick={resetWorkpiece}
+                      title="Reset benda kerja kembali ke bahan mentah dan buka kunci dimensi"
+                    >
+                      <Icon name="restart" size={13} />
+                      <span>Reset</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
           ) : (
             <>
-              <div className={`view-stage${theater ? ' view-stage--full' : ''}`}>
+              <div className="view-stage view-stage--full">
                 <ViewportBoundary onError={on3DFail}>
                   <Suspense
                     fallback={(
-                      <div className="vp3d-loading" style={{ height: 520 }}>
-                        Menyiapkan mesin 3D…
+                      <div className="vp3d-loading" style={{ height: '100%' }}>
+                        Menyiapkan simulasi mesin 3D…
                       </div>
                     )}
                   >
@@ -540,10 +702,10 @@ export default function Simulator({
                       playheadRef={playheadRef}
                       crashed={crashed}
                       target={target3d}
-                      showToolpath={showToolpath}
-                      transparent={transparent}
-                      targetVisible={targetVisible}
-                      height={520}
+                      showToolpath={true}
+                      transparent={false}
+                      targetVisible={Boolean(submitTo || modul?.id)}
+                      height={480}
                       shot={shot}
                       doorClosed={doorClosed}
                       status={status}
@@ -552,18 +714,7 @@ export default function Simulator({
                   </Suspense>
                 </ViewportBoundary>
 
-                <ControlPanel2D
-                  sim={sim}
-                  stockD={stockD}
-                  stockL={stockL}
-                  target={target3d}
-                  playheadRef={playheadRef}
-                  visible={shot === 'panel' && panelReady}
-                  status={status}
-                  crashed={crashed}
-                />
-
-                {shot === 'machine' && !fallback && (
+                {theater && !fallback && (
                   <div className="run-hud">
                     <div className="run-progress"><i style={{ width: `${progressPct}%` }} /></div>
 
@@ -576,11 +727,11 @@ export default function Simulator({
                         </div>
                       </div>
 
-                      <div className="u-row" style={{ gap: 8 }}>
-                        {result && (status === 'SELESAI' || status === 'ALARM') && (
-                          isTugas ? (
+                      {result && (status === 'SELESAI' || status === 'ALARM') && (
+                        <div style={{ marginLeft: 'auto' }}>
+                          {isTugas ? (
                             <div className={`run-score ${shownMatch ? 'match' : 'nomatch'}`}>
-                              <b>{shownScore}<em>/100</em></b>
+                              <b>{shownMatch ? shownScore : shownScore}<em>/100</em></b>
                               <span>{shownMatch ? 'sesuai target' : 'belum sesuai target'}</span>
                             </div>
                           ) : (
@@ -588,26 +739,20 @@ export default function Simulator({
                               <b>{status === 'ALARM' ? 'TABRAKAN' : 'AMAN'}</b>
                               <span>{status === 'ALARM' ? 'pahat menabrak' : 'tanpa tabrakan'}</span>
                             </div>
-                          )
-                        )}
-                        <button
-                          className="run-btn run-btn--primary"
-                          onClick={returnToEdit}
-                          title="Kembali ke mode edit panel"
-                        >
-                          <Icon name="edit" size={14} />
-                          <span>Kembali ke Mode Edit</span>
-                        </button>
-                      </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
-                    <div className="run-controls">
-                      <span className="run-step">Langkah {step}/{moves.length}</span>
+                    <div className="run-controls" style={{ flexWrap: 'nowrap', display: 'inline-flex', alignItems: 'center' }}>
+                      <span className="run-step" style={{ whiteSpace: 'nowrap', width: 'auto', flex: 'none' }}>
+                        Langkah {step}/{moves.length}
+                      </span>
                       <select
                         value={speed}
                         onChange={(e) => setSpeed(Number(e.target.value))}
-                        className="run-btn"
-                        style={{ padding: '5px 8px', width: 'auto' }}
+                        className="run-btn run-btn--speed"
+                        style={{ width: 'auto', minWidth: 52, maxWidth: 62, margin: 0, flex: 'none' }}
                         title="Kecepatan animasi"
                       >
                         <option value={0.5}>0,5×</option>
@@ -615,7 +760,7 @@ export default function Simulator({
                         <option value={2}>2×</option>
                         <option value={4}>4×</option>
                       </select>
-                      <button className="run-btn run-btn--primary" onClick={play}>
+                      <button className="run-btn run-btn--primary" onClick={play} style={{ whiteSpace: 'nowrap', flex: 'none' }}>
                         <Icon name={status === 'AUTO' ? 'pause' : status === 'ALARM' ? 'restart' : 'play'} size={14} />
                         <span>{status === 'AUTO' ? 'Jeda'
                           : status === 'PAUSE' || status === 'STOP' ? 'Lanjutkan'
@@ -623,88 +768,36 @@ export default function Simulator({
                               : status === 'SELESAI' ? 'Putar ulang' : 'Jalankan'}</span>
                       </button>
                       {(playing || paused) && (
-                        <button className="run-btn" onClick={stop}><Icon name="stop" size={14} /><span>Stop</span></button>
+                        <button className="run-btn" onClick={stop} style={{ whiteSpace: 'nowrap', flex: 'none' }}>
+                          <Icon name="stop" size={14} /><span>Stop</span>
+                        </button>
                       )}
-                      <button className="run-btn" onClick={returnToEdit}><Icon name="edit" size={14} /><span>Kembali edit</span></button>
+                      <button className="run-btn run-btn--return" onClick={returnToEdit} style={{ whiteSpace: 'nowrap', flex: 'none' }} title="Kembali ke mode editor G-Code">
+                        <Icon name="edit" size={14} />
+                        <span>Kembali edit</span>
+                      </button>
                     </div>
                   </div>
                 )}
               </div>
-
-              {!theater && (
-                <div className="viewport-tools">
-                  <label><input type="checkbox" checked={showToolpath} onChange={(e) => setShowToolpath(e.target.checked)} /> Toolpath</label>
-                  <label><input type="checkbox" checked={transparent} onChange={(e) => setTransparent(e.target.checked)} /> Benda transparan</label>
-                  <label><input type="checkbox" checked={targetVisible} onChange={(e) => setTargetVisible(e.target.checked)} /> Target Ø{target.target_d}</label>
-                  {shot === 'machine' && (
-                    <button
-                      className="run-btn run-btn--primary"
-                      onClick={returnToEdit}
-                      style={{ marginLeft: 'auto', padding: '4px 10px', fontSize: 11 }}
-                    >
-                      <Icon name="edit" size={13} />
-                      <span>Kembali ke Panel</span>
-                    </button>
-                  )}
-                  {!submitTo && !modul?.id && (
-                    <div className="u-row" style={{ gap: 6, marginLeft: 'auto' }}>
-                      <span className="dim">Ukuran stock:</span>
-                      <select
-                        className="run-btn"
-                        style={{ padding: '3px 8px', fontSize: 12, height: 28, background: 'rgba(255,255,255,.08)' }}
-                        value={stockD}
-                        onChange={(e) => {
-                          const v = Number(e.target.value);
-                          setCustomStockD(v);
-                          onStockChange?.(v, stockL);
-                        }}
-                        title="Pilih diameter benda kerja"
-                      >
-                        <option value={20}>Ø 20 mm</option>
-                        <option value={25}>Ø 25 mm</option>
-                        <option value={30}>Ø 30 mm</option>
-                        <option value={32}>Ø 32 mm</option>
-                        <option value={40}>Ø 40 mm</option>
-                        <option value={50}>Ø 50 mm</option>
-                      </select>
-                      <select
-                        className="run-btn"
-                        style={{ padding: '3px 8px', fontSize: 12, height: 28, background: 'rgba(255,255,255,.08)' }}
-                        value={stockL}
-                        onChange={(e) => {
-                          const v = Number(e.target.value);
-                          setCustomStockL(v);
-                          onStockChange?.(stockD, v);
-                        }}
-                        title="Pilih panjang benda kerja"
-                      >
-                        <option value={40}>P 40 mm</option>
-                        <option value={50}>P 50 mm</option>
-                        <option value={60}>P 60 mm</option>
-                        <option value={80}>P 80 mm</option>
-                        <option value={100}>P 100 mm</option>
-                      </select>
-                    </div>
-                  )}
-                  <span className="dim" style={{ marginLeft: submitTo || modul?.id ? 'auto' : 8 }}>Drag = putar • scroll = zoom</span>
-                </div>
-              )}
             </>
           )}
 
           {fallbackNote && <p className="fallback-note">{fallbackNote}</p>}
 
-          {!isRunView && (
-            <div className="row wrap" style={{ marginTop: 8 }}>
+          {!theater && (submitTo || bolehSimpan) && (
+            <div className="row wrap" style={{ marginTop: 12 }}>
               {submitTo ? (
                 <Button icon="send" loading={busy === 'kirim'} onClick={kirimTugas} disabled={!sim}>
                   {kirim ? 'Kirim ulang ke guru' : 'Kirim ke guru'}
                 </Button>
               ) : (
                 <>
-                  <Button variant="sec" icon="save" onClick={bukaSimpanProgram}>
-                    {programId ? 'Perbarui program' : 'Simpan ke program saya'}
-                  </Button>
+                  {bolehSimpan && (
+                    <Button variant="sec" icon="save" onClick={bukaSimpanProgram}>
+                      {programId ? 'Perbarui program' : 'Simpan ke program saya'}
+                    </Button>
+                  )}
                   {idModul && bolehSimpan && (
                     <Button variant="sec" icon="layers" loading={busy === 'save'} onClick={saveAttempt}>
                       Simpan sebagai percobaan
@@ -712,13 +805,10 @@ export default function Simulator({
                   )}
                 </>
               )}
-              <Button variant="sec" icon="robot" loading={busy === 'tutor'} onClick={askTutor}>
-                Tanya CNC-Bot
-              </Button>
             </div>
           )}
 
-          {!isRunView && kirim && (
+          {!theater && kirim && (
             <div className={`score ${kirim.match ? 'match' : 'nomatch'}`}>
               Dikirim {jam(kirim.pengumpulan?.waktu_submit) || 'baru saja'} • skor simulator {kirim.skor}/100
               {' '}{kirim.match ? 'sesuai target' : 'belum sesuai target'}
@@ -730,7 +820,7 @@ export default function Simulator({
             </div>
           )}
 
-          {!isRunView && tutor && (
+          {!theater && tutor && (
             <div className="tutor">
               <b>CNC-Bot <span className="dim">({tutor.source}){isTugas && (tutor.skor != null || shownScore != null) ? ` • skor ${tutor.skor ?? shownScore}/100` : ''}</span></b>
               <ul>{tutor.feedback.map((t, i) => <li key={i} style={{ whiteSpace: 'pre-line' }}>{t}</li>)}</ul>

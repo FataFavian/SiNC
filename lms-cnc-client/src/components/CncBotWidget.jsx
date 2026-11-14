@@ -1,28 +1,16 @@
 // =============================================================
-// CncBotWidget.jsx - maskot AI mengambang di pojok kanan bawah.
-// Tampil untuk siswa (CNC-Bot - mentor Sokratik) dan guru (CNC-TeacherBot - asisten KBM).
-// Ukuran maskot proporsional mengikuti model AI (bukan lingkaran kaku).
+// CncBotWidget.jsx - Maskot AI interaktif di pojok kanan bawah.
+// Memiliki animasi unik dan berbeda di setiap page, kedipan mata
+// (eye blinking), gerakan super smooth, serta dialog kontekstual.
 // =============================================================
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api';
+import { useRoute } from '../router';
 import { useSession } from '../session';
 import Icon from '../ui/Icon.jsx';
 import studentMascot from '../assets/cncbot-character.png';
 import teacherMascot from '../assets/teacherbot-character.png';
 import studentAvatar from '../assets/cncbot-avatar.jpg';
-
-const SISWA_GREETINGS = [
-  'Halo {nama}! Ada kode G-Code yang ingin dibahas bareng CNC-Bot?',
-  'Hai {nama}! Siap latihan bubut CNC hari ini?',
-  'Halo {nama}! Bingung arah koordinat X/Z? Yuk tanya CNC-Bot!',
-  'Hai {nama}! CNC-Bot siap bantu kamu memahami jalur pahat!',
-];
-
-const GURU_GREETINGS = [
-  'Selamat datang Bapak/Ibu {nama}! Ada tugas atau kuis CNC yang ingin disiapkan hari ini?',
-  'Halo Bapak/Ibu {nama}! Butuh ide tugas praktik bubut CNC atau rubrik penilaian?',
-  'Halo Bapak/Ibu {nama}! CNC-TeacherBot siap membantu perancangan materi & evaluasi KBM.',
-];
 
 const SISWA_CHIPS = [
   'Apa beda G00 dan G01?',
@@ -38,23 +26,70 @@ const GURU_CHIPS = [
   'Kriteria rubrik penilaian tugas praktik bubut',
 ];
 
-function pickGreeting(nama, isGuru) {
-  const list = isGuru ? GURU_GREETINGS : SISWA_GREETINGS;
-  const idx = Math.floor(Math.random() * list.length);
-  return list[idx].replace('{nama}', nama || (isGuru ? 'Guru' : 'kamu'));
+function getPageAnimation(path) {
+  if (path.startsWith('/siswa/latihan')) return 'craft'; // Hop ceria semangat eksperimen
+  if (path.startsWith('/siswa/tugas')) return 'focus'; // Angguk fokus belajar
+  if (path.startsWith('/siswa/program')) return 'peek'; // Intip/tengok lemari program
+  if (path.startsWith('/siswa/materi')) return 'think'; // Melayang santai memikirkan materi
+  if (path.startsWith('/siswa/nilai')) return 'cheer'; // Loncat gembira rayakan nilai
+  return 'wave'; // Lambaian tangan ramah di beranda
+}
+
+function getContextualGreeting(path, nama, isGuru) {
+  const shortName = nama?.split(' ')[0] || (isGuru ? 'Bapak/Ibu' : 'kamu');
+
+  if (isGuru) {
+    if (path.startsWith('/guru/tugas')) {
+      return `Halo Bapak/Ibu ${shortName}! Kelola penugasan praktik, kuis, dan rubrik penilaian siswa di sini. 📋`;
+    }
+    if (path.startsWith('/guru/kelas')) {
+      return `Halo Bapak/Ibu ${shortName}! Pantau daftar siswa dan keaktifan rombel belajar Anda di sini. 👥`;
+    }
+    if (path.startsWith('/guru/materi') || path.startsWith('/guru/modul')) {
+      return `Pustaka materi ajar & modul bubut CNC siap dibagikan ke siswa Anda. 📚`;
+    }
+    return `Halo Bapak/Ibu ${shortName}! 👋 CNC-TeacherBot siap mendampingi KBM bubut CNC hari ini.`;
+  }
+
+  // Siswa
+  if (path.startsWith('/siswa/latihan')) {
+    return `Pilih 1 modul untuk latihan atau bikin kode mu sendiri! 🚀 Bebas bereksperimen di simulator ini!`;
+  }
+  if (path.startsWith('/siswa/tugas')) {
+    return `Halo ${shortName}! Ayo selesaikan tugas praktik dan kuis CNC kamu untuk raih skor terbaik! 📝`;
+  }
+  if (path.startsWith('/siswa/program')) {
+    return `Ini lemari program G-Code milikmu, ${shortName}! Muat kembali program tersimpan ke simulator kapan saja. 💾`;
+  }
+  if (path.startsWith('/siswa/materi')) {
+    return `Pelajari konsep dasar mesin bubut CNC, keselamatan kerja, hingga kode G-Code di sini! 📖`;
+  }
+  if (path.startsWith('/siswa/nilai')) {
+    return `Pantau perkembangan belajarmu dan evaluasi hasil latihan dari guru di sini! 📊`;
+  }
+  // Beranda atau default
+  return `Halo ${shortName}! 👋 Ada kode G-Code yang ingin dibahas atau dicoba bareng CNC-Bot hari ini?`;
 }
 
 export default function CncBotWidget() {
   const { user } = useSession();
+  const currentPath = useRoute();
   const [open, setOpen] = useState(false);
   const [bubble, setBubble] = useState('');
+  const [bubbleType, setBubbleType] = useState('info');
   const [dismissed, setDismissed] = useState(false);
+  const [animType, setAnimType] = useState('wave');
+  const [animTrigger, setAnimTrigger] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
   const chatEndRef = useRef(null);
-  const shownRef = useRef(false);
+  const prevPathRef = useRef('');
+  const debounceTimerRef = useRef(0);
+
+  const isGuru = user?.role === 'guru';
+  const isSiswa = user?.role === 'siswa';
 
   const handleCopy = (text, index) => {
     if (navigator?.clipboard?.writeText) {
@@ -64,29 +99,56 @@ export default function CncBotWidget() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  const isGuru = user?.role === 'guru';
-  const isSiswa = user?.role === 'siswa';
-
-  // Hanya tampil untuk siswa atau guru
-  if (!user || (!isSiswa && !isGuru)) return null;
-
-  const botName = isGuru ? 'Asisten Guru CNC' : 'CNC-Bot';
-  const botSub = isGuru ? 'Partner KBM & Penyusun Tugas' : 'Mentor Belajar CNC';
-  const mascotImg = isGuru ? teacherMascot : studentMascot;
-  const chips = isGuru ? GURU_CHIPS : SISWA_CHIPS;
-
-  // Sapaan pertama kali muncul setelah 1.2 detik
+  // Event listener untuk pesan simulator interaktif (error / tabrakan / lancar aman)
   useEffect(() => {
-    if (shownRef.current) return;
-    shownRef.current = true;
-    const timer = setTimeout(() => {
-      const shortName = user.nama?.split(' ')[0] || user.nama;
-      const greeting = pickGreeting(shortName, isGuru);
+    const handleBotBubble = (e) => {
+      const { text, type, anim } = e.detail || {};
+      if (!text) return;
+      setBubble(text);
+      setBubbleType(type || 'info');
+      setDismissed(false);
+      setAnimType(anim || (type === 'crash' || type === 'error' ? 'think' : type === 'success' ? 'cheer' : 'craft'));
+      setAnimTrigger(true);
+      setTimeout(() => setAnimTrigger(false), 2400);
+
+      // Tambahkan ke log percakapan jika belum ada pesan kembar di paling bawah
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last && last.text === text) return prev;
+        return [...prev, { role: 'bot', text, type }];
+      });
+    };
+
+    window.addEventListener('cnc:bot-bubble', handleBotBubble);
+    return () => window.removeEventListener('cnc:bot-bubble', handleBotBubble);
+  }, []);
+
+  // Reaksi interaktif saat berpindah halaman: animasi unik per page & kedipan mata
+  useEffect(() => {
+    if (!user || (!isSiswa && !isGuru)) return;
+    if (prevPathRef.current === currentPath) return;
+
+    prevPathRef.current = currentPath;
+    clearTimeout(debounceTimerRef.current);
+
+    debounceTimerRef.current = setTimeout(() => {
+      const pageAnim = getPageAnimation(currentPath);
+      setAnimType(pageAnim);
+      setAnimTrigger(true);
+      setTimeout(() => setAnimTrigger(false), 1800);
+
+      const greeting = getContextualGreeting(currentPath, user.nama, isGuru);
       setBubble(greeting);
-      setMessages([{ role: 'bot', text: greeting }]);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, [user.nama, isGuru]);
+      setDismissed(false);
+
+      setMessages((prev) => {
+        if (prev.length === 0) return [{ role: 'bot', text: greeting }];
+        return [...prev, { role: 'bot', text: greeting }];
+      });
+    }, 250);
+
+    return () => clearTimeout(debounceTimerRef.current);
+  }, [currentPath, user, isSiswa, isGuru]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -133,11 +195,24 @@ export default function CncBotWidget() {
     }
   }, [handleSendText]);
 
+  // Hanya tampil untuk siswa atau guru
+  if (!user || (!isSiswa && !isGuru)) return null;
+
+  const botName = isGuru ? 'Asisten Guru CNC' : 'CNC-Bot';
+  const botSub = isGuru ? 'Partner KBM & Penyusun Tugas' : 'Mentor Belajar CNC';
+  const mascotImg = isGuru ? teacherMascot : studentMascot;
+  const chips = isGuru ? GURU_CHIPS : SISWA_CHIPS;
+
   return (
     <div className={`cncbot${isGuru ? ' cncbot--guru' : ''}`}>
-      {/* Bubble chat sapaan */}
+      {/* Bubble chat sapaan & notifikasi interaktif */}
       {bubble && !dismissed && !open && (
-        <div className="cncbot__bubble" onClick={toggleChat} role="button" tabIndex={0}>
+        <div
+          className={`cncbot__bubble cncbot__bubble--${bubbleType}`}
+          onClick={toggleChat}
+          role="button"
+          tabIndex={0}
+        >
           <button className="cncbot__bubble-close" onClick={dismissBubble} title="Tutup sapaan">
             <Icon name="close" size={11} />
           </button>
@@ -265,18 +340,20 @@ export default function CncBotWidget() {
         </div>
       )}
 
-      {/* Tombol Maskot Mengambang (Ukuran proporsional sesuai model karakter AI) */}
+      {/* Tombol Maskot Mengambang dengan animasi unik per halaman & kedipan mata */}
       <button
         className={`cncbot__mascot-btn${open ? ' is-open' : ''}`}
         onClick={toggleChat}
         title={isGuru ? 'Buka Asisten Guru CNC' : 'Tanya CNC-Bot'}
         aria-label={botName}
       >
-        <img
-          src={mascotImg}
-          alt={botName}
-          className="cncbot__mascot-img"
-        />
+        <div className={`cncbot__character-wrap${animTrigger ? ` cncbot__character-wrap--${animType}` : ''}`}>
+          <img
+            src={mascotImg}
+            alt={botName}
+            className="cncbot__mascot-img"
+          />
+        </div>
         <div className="cncbot__mascot-badge">
           <span className="cncbot__dot" />
           <span>{botName}</span>

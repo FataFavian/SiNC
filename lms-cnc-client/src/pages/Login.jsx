@@ -5,10 +5,9 @@
 import { useState } from 'react';
 import { navigate } from '../router';
 import { useSession } from '../session';
-import { useTheme } from '../theme.jsx';
 import Icon from '../ui/Icon.jsx';
 import sincLogo from '../assets/sinc-logo.png';
-import { Alert, Button, Field, IconButton, Input } from '../ui/primitives.jsx';
+import { Alert, Button, Field, Input } from '../ui/primitives.jsx';
 
 const DEMO = [
   ['Administrator', 'admin@smk.sch.id'],
@@ -17,15 +16,34 @@ const DEMO = [
 ];
 
 const VALUE = [
-  ['class', 'Rombel terstruktur', 'Guru membuat rombel, mengisi anggota lewat impor NIS massal atau kode gabung kelas.'],
-  ['assignment', 'Tugas praktik & kuis', 'Tugas G-Code dinilai otomatis oleh mesin simulasi; kuis pilihan ganda, benar/salah, dan isian dinilai seketika.'],
-  ['cube', 'Simulator 3D', 'Siswa merancang G-Code, menjalankannya pada mesin bubut 3D, lalu mengumpulkan hasil simulasi.'],
-  ['chart', 'Penilaian & rekap', 'Guru memberi nilai dan catatan, rekap per rombel dan sekap sekolah siap diunduh sebagai CSV.'],
+  {
+    icon: 'class',
+    judul: 'Rombel Terstruktur',
+    teks: 'Guru membuat rombel, mengisi anggota lewat impor NIS massal atau kode gabung kelas secara instan.',
+    color: 'orange',
+  },
+  {
+    icon: 'check-circle',
+    judul: 'Tugas Praktik & Kuis',
+    teks: 'G-Code dinilai otomatis oleh mesin evaluasi syntax; kuis pilihan ganda dan isian dinilai seketika.',
+    color: 'green',
+  },
+  {
+    icon: 'cube',
+    judul: 'Simulator Mesin 3D',
+    teks: 'Siswa merancang lintasan pahat, menjalankan pembubutan 3D bebas tabrakan, lalu mengumpulkan hasil kerja.',
+    color: 'amber',
+  },
+  {
+    icon: 'chart',
+    judul: 'Penilaian & Rekap Otomatis',
+    teks: 'Guru memberi feedback, rekapitulasi portofolio per kelas siap unduh dalam format CSV/Excel untuk e-Rapor.',
+    color: 'cyan',
+  },
 ];
 
 export default function Login() {
   const { login, daftar } = useSession();
-  const { theme, toggleTheme } = useTheme();
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ nama: '', email: '', password: '', kelas: '', kode: '' });
   const [err, setErr] = useState('');
@@ -56,43 +74,45 @@ export default function Login() {
       <section className="auth__aside">
         <div className="auth__brand">
           <span className="auth__mark" style={{ background: 'transparent', padding: 0, overflow: 'hidden' }}>
-            <img src={sincLogo} alt="SiNC" style={{ width: 44, height: 44, borderRadius: 12, display: 'block' }} />
+            <img src={sincLogo} alt="SiNC" style={{ width: 42, height: 42, borderRadius: 12, display: 'block' }} />
           </span>
-          <div style={{ flex: 1 }}>
-            <b style={{ fontSize: 18, letterSpacing: '-0.01em' }}>S<span style={{ color: 'var(--accent)' }}>i</span>NC</b>
+          <div>
+            <b style={{ fontSize: 18, letterSpacing: '-0.02em', color: '#ffffff', display: 'block' }}>
+              S<span style={{ color: 'var(--accent)' }}>i</span>NC
+            </b>
             <div className="dim" style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase' }}>Simulator CNC</div>
           </div>
-          <IconButton
-            name={theme === 'light' ? 'moon' : 'sun'}
-            title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
-            variant="sec"
-            size="sm"
-            onClick={toggleTheme}
-          />
         </div>
 
-        <h2>Belajar pemrograman bubut CNC sampai benar-benar terampil</h2>
-        <p className="dim" style={{ maxWidth: 520 }}>
-          Satu ruang belajar untuk admin, guru, dan siswa: materi, tugas praktik G-Code,
-          simulator mesin 3D, kuis otomatis, dan rekap nilai dalam satu aplikasi.
+        <h2 className="auth__hero-title">
+          Belajar pemrograman bubut CNC sampai <span className="auth__hero-accent">benar–benar terampil.</span>
+        </h2>
+        <p className="auth__hero-sub">
+          Simulator bubut CNC berbasis web dengan LMS ringan dan AI Tutor untuk pembelajaran G-Code.
         </p>
 
-        <div className="auth__list">
-          {VALUE.map(([icon, judul, teks]) => (
-            <div className="auth__li" key={judul}>
-              <Icon name={icon} size={18} />
-              <span><b style={{ display: 'block', color: '#eaf1f7' }}>{judul}</b>{teks}</span>
+        <div className="auth__grid">
+          {VALUE.map((item) => (
+            <div className="auth__feature-card" key={item.judul}>
+              <div className={`auth__feature-icon auth__feature-icon--${item.color}`}>
+                <Icon name={item.icon} size={18} />
+              </div>
+              <b className="auth__feature-title">{item.judul}</b>
+              <p className="auth__feature-desc">{item.teks}</p>
             </div>
           ))}
-        </div>
-
-        <div className="auth__foot">
-          <span className="dim" style={{ fontSize: 12 }}>Platform LMS & Simulator Pembelajaran CNC</span>
         </div>
       </section>
 
       <section className="auth__panel">
         <form className="auth-card" onSubmit={kirim}>
+          <div className="auth-card-brand">
+            <img src={sincLogo} alt="SiNC" />
+            <div className="auth-card-brand__info">
+              <b className="auth-card-brand__title">S<span className="auth-card-brand__dot">i</span>NC</b>
+              <span className="auth-card-brand__sub">Simulator CNC</span>
+            </div>
+          </div>
           <h1>{mode === 'login' ? 'Masuk ke akun' : 'Daftar sebagai siswa'}</h1>
           <p className="dim">{mode === 'login'
             ? 'Gunakan email dan password yang telah didaftarkan.'
@@ -134,8 +154,8 @@ export default function Login() {
             {mode === 'login' ? 'Masuk' : 'Buat akun'}
           </Button>
 
-          <div className="auth-card__demo-divider" style={{ borderTop: '1px solid rgba(245, 238, 226, 0.16)', margin: '14px 0 10px', position: 'relative', textAlign: 'center' }}>
-            <span style={{ position: 'relative', top: -9, background: 'rgba(17, 26, 45, 0.95)', padding: '0 10px', fontSize: 11.5, color: 'var(--muted)' }}>
+          <div className="auth-card__demo-divider" style={{ borderTop: '1px solid var(--line)', margin: '14px 0 10px', position: 'relative', textAlign: 'center' }}>
+            <span style={{ position: 'relative', top: -9, background: 'var(--card-bg, #ffffff)', padding: '0 10px', fontSize: 11.5, color: 'var(--muted)' }}>
               atau coba tanpa akun
             </span>
           </div>
@@ -154,10 +174,10 @@ export default function Login() {
                 fontSize: 12.5,
                 fontWeight: 600,
                 textDecoration: 'none',
-                color: 'var(--text-strong, #fffdf8)',
-                background: 'rgba(245, 238, 226, 0.08)',
-                border: '1px solid rgba(245, 238, 226, 0.24)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                color: 'var(--text-strong)',
+                background: 'var(--surface-2, #f8fafc)',
+                border: '1px solid var(--line)',
+                boxShadow: 'var(--sh-1)'
               }}
             >
               <Icon name="cube" size={15} style={{ color: 'var(--muted)' }} />

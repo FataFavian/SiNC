@@ -2,11 +2,11 @@
 // App.jsx - kerangka aplikasi LMS: layar login, kerangka berbasis peran
 // (sidebar + topbar) dan rute hash tiap halaman.
 // =============================================================
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from './api';
 import { Link, navigate, parse, useRoute } from './router';
 import { SessionProvider, useSession } from './session';
-import { ThemeProvider, useTheme } from './theme.jsx';
+import { ThemeProvider } from './theme.jsx';
 import Icon from './ui/Icon.jsx';
 import { ConfirmHost, IconButton, Spinner, Toaster } from './ui/primitives.jsx';
 import { inisial, useAsync } from './ui/hooks.jsx';
@@ -19,6 +19,7 @@ import AdminUsers from './pages/admin/AdminUsers.jsx';
 import AdminClasses from './pages/admin/AdminClasses.jsx';
 import GuruHome from './pages/guru/GuruHome.jsx';
 import GuruTasks from './pages/guru/GuruTasks.jsx';
+import GuruFreeSim from './pages/guru/GuruFreeSim.jsx';
 import TaskBuilder from './pages/guru/TaskBuilder.jsx';
 import TaskDetail from './pages/guru/TaskDetail.jsx';
 import MateriLibrary from './pages/guru/MateriLibrary.jsx';
@@ -44,6 +45,7 @@ const NAV = {
       items: [
         { to: '/admin/pengguna', label: 'Pengguna', icon: 'users' },
         { to: '/admin/kelas', label: 'Rombel & anggota', icon: 'class' },
+        { to: '/admin/latihan', label: 'Simulator bebas', icon: 'cube' },
         { to: '/admin/modul', label: 'Pustaka modul', icon: 'book' },
       ],
     },
@@ -55,6 +57,7 @@ const NAV = {
       items: [
         { to: '/guru/kelas', label: 'Rombel saya', icon: 'class' },
         { to: '/guru/tugas', label: 'Tugas & kuis', icon: 'assignment' },
+        { to: '/guru/latihan', label: 'Simulator bebas', icon: 'cube' },
         { to: '/guru/materi', label: 'Materi ajar', icon: 'book' },
         { to: '/guru/modul', label: 'Pustaka modul', icon: 'layers' },
       ],
@@ -100,6 +103,7 @@ function Outlet({ segments, role, queryParams }) {
     if (!b) return <AdminHome />;
     if (b === 'pengguna') return <AdminUsers />;
     if (b === 'kelas') return c ? <ClassDetail id={c} /> : <AdminClasses />;
+    if (b === 'latihan') return <GuruFreeSim />;
     if (b === 'modul') return <Modules />;
     return <AdminHome />;
   }
@@ -107,6 +111,7 @@ function Outlet({ segments, role, queryParams }) {
   if (a === 'guru') {
     if (!b) return <GuruHome />;
     if (b === 'kelas') return c ? <ClassDetail id={c} /> : <AdminClasses guruOnly />;
+    if (b === 'latihan') return <GuruFreeSim />;
     if (b === 'materi') return <MateriLibrary kelasId={queryParams.kelas} />;
     if (b === 'modul') return <Modules />;
     if (b === 'tugas') {
@@ -133,7 +138,6 @@ function Outlet({ segments, role, queryParams }) {
 
 function Shell() {
   const { user, keluar } = useSession();
-  const { theme, toggleTheme } = useTheme();
   const route = useRoute();
   const { segments, query } = useMemo(() => parse(route), [route]);
   const [drawer, setDrawer] = useState(false);
@@ -163,6 +167,44 @@ function Shell() {
   const active = '/' + segments.join('/');
   const title = segments.length ? titleFor(role, segments) : 'Beranda';
 
+  const navRef = useRef(null);
+  const [hoverTarget, setHoverTarget] = useState(null);
+  const [sliderPos, setSliderPos] = useState({ top: 0, height: 40, opacity: 0 });
+
+  const isHoveringInactive = Boolean(hoverTarget && hoverTarget !== active);
+
+  useEffect(() => {
+    const updateSlider = () => {
+      if (!navRef.current) return;
+      const navEl = navRef.current;
+      const targetKey = hoverTarget || active;
+      const targetEl =
+        (hoverTarget && navEl.querySelector(`[data-nav="${hoverTarget}"]`)) ||
+        navEl.querySelector('.nav__item.is-active') ||
+        navEl.querySelector(`[data-nav="${active}"]`);
+
+      if (targetEl) {
+        const navRect = navEl.getBoundingClientRect();
+        const elRect = targetEl.getBoundingClientRect();
+        setSliderPos({
+          top: elRect.top - navRect.top + navEl.scrollTop,
+          height: elRect.height,
+          opacity: 1,
+        });
+      } else {
+        setSliderPos((s) => ({ ...s, opacity: 0 }));
+      }
+    };
+
+    updateSlider();
+    const raf = requestAnimationFrame(updateSlider);
+    window.addEventListener('resize', updateSlider);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', updateSlider);
+    };
+  }, [active, hoverTarget, min, role]);
+
   const sidebar = (
     <aside className={`sidebar${min ? ' sidebar--min' : ''}${drawer ? ' sidebar--open' : ''}`}>
       <div className="brand">
@@ -173,12 +215,31 @@ function Shell() {
         </span>
       </div>
 
-      <nav className="nav">
+      <nav
+        className="nav"
+        ref={navRef}
+        onMouseLeave={() => setHoverTarget(null)}
+      >
+        <div
+          className={`nav__slider${isHoveringInactive ? ' nav__slider--hover' : ''}`}
+          style={{
+            transform: `translate3d(0, ${sliderPos.top}px, 0)`,
+            height: sliderPos.height,
+            opacity: sliderPos.opacity,
+          }}
+        />
         {nav.map((g) => (
           <div key={g.title}>
             <div className="nav__title">{g.title}</div>
             {g.items.map((it) => (
-              <Link key={it.to} to={it.to} className={`nav__item${active === it.to ? ' is-active' : ''}`} title={it.label}>
+              <Link
+                key={it.to}
+                to={it.to}
+                data-nav={it.to}
+                onMouseEnter={() => setHoverTarget(it.to)}
+                className={`nav__item${active === it.to ? ' is-active' : ''}`}
+                title={it.label}
+              >
                 <Icon name={it.icon} size={17} />
                 <span className="nav__label">{it.label}</span>
                 {it.countKey && counts[it.countKey] ? <em className="nav__count">{counts[it.countKey]}</em> : null}
@@ -186,15 +247,6 @@ function Shell() {
             ))}
           </div>
         ))}
-        {role !== 'siswa' && (
-          <>
-            <div className="nav__title">Simulasi</div>
-            <a className="nav__item" href="?demo=3d" target="_blank" rel="noreferrer" title="Contoh mesin 3D">
-              <Icon name="cube" size={17} />
-              <span className="nav__label">Demo mesin 3D</span>
-            </a>
-          </>
-        )}
       </nav>
 
       <div className="sidebar__foot">
@@ -208,13 +260,6 @@ function Shell() {
         <div className="u-row">
           <IconButton name="settings" title="Profil saya" variant="sec" size="sm" onClick={() => navigate('/profil')} />
           <IconButton name="logout" title="Keluar" variant="sec" size="sm" onClick={keluar} />
-          <IconButton
-            name={theme === 'light' ? 'moon' : 'sun'}
-            title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
-            variant="sec"
-            size="sm"
-            onClick={toggleTheme}
-          />
           <span className="spacer" />
           <IconButton name={min ? 'chevron-right' : 'chevron-left'} title={min ? 'Buka menu' : 'Ringkas menu'} size="sm" onClick={() => setMin(!min)} />
         </div>
@@ -241,20 +286,15 @@ function Shell() {
               <Link className="chip chip--accent" to="/guru/tugas">{counts.menunggu} perlu dinilai</Link>
             )}
             <span className={`role-tag role-tag--${role}`}>{role}</span>
-            <IconButton
-              name={theme === 'light' ? 'moon' : 'sun'}
-              title={theme === 'light' ? 'Beralih ke mode gelap (Cockpit Mesin)' : 'Beralih ke mode terang (Blueprint Edukasi)'}
-              variant="sec"
-              size="sm"
-              onClick={toggleTheme}
-            />
           </div>
         </header>
         <main className="content">
           {stats.loading && !stats.data ? (
             <div className="demo-load"><Spinner size={18} /> Memuat data…</div>
           ) : (
-            <Outlet segments={segments.length ? segments : [HOME[role].slice(1)]} role={role} queryParams={query} />
+            <div key={segments.join('/') || 'home'} className="content-page">
+              <Outlet segments={segments.length ? segments : [HOME[role].slice(1)]} role={role} queryParams={query} />
+            </div>
           )}
         </main>
       </div>

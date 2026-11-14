@@ -3,7 +3,7 @@
 // Semua kelas CSS-nya ada di styles.css bagian "design system".
 // Ikon hanya lewat <Icon />, tanpa emoji.
 // =============================================================
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from './Icon.jsx';
 
 export const cx = (...parts) => parts.filter(Boolean).join(' ');
@@ -175,18 +175,71 @@ export function Table({ columns, rows, rowKey = 'id', onRow, empty = 'Belum ada 
 }
 
 export function Tabs({ items, value, onChange, className }) {
+  const containerRef = useRef(null);
+  const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0, isHover: false });
+  const [hoverVal, setHoverVal] = useState(null);
+
+  const updateSlider = useCallback((targetValue, isHover = false) => {
+    if (!containerRef.current) return;
+    const targetEl = containerRef.current.querySelector(`[data-tab-value="${targetValue}"]`);
+    if (targetEl) {
+      setSlider({
+        left: targetEl.offsetLeft,
+        width: targetEl.offsetWidth,
+        opacity: 1,
+        isHover,
+      });
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    updateSlider(hoverVal || value, !!hoverVal);
+  }, [value, hoverVal, items, updateSlider]);
+
+  useEffect(() => {
+    const handleResize = () => updateSlider(hoverVal || value, !!hoverVal);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [value, hoverVal, updateSlider]);
+
   return (
-    <div className={cx('tabs', className)} role="tablist">
+    <div
+      ref={containerRef}
+      className={cx('tabs', className)}
+      role="tablist"
+      onMouseLeave={() => {
+        setHoverVal(null);
+        updateSlider(value, false);
+      }}
+    >
+      <div
+        className={cx('tabs__slider', slider.isHover && 'tabs__slider--hover')}
+        style={{
+          transform: `translate3d(${slider.left}px, 0, 0)`,
+          width: `${slider.width}px`,
+          opacity: slider.opacity,
+        }}
+        aria-hidden="true"
+      />
       {items.map((it) => (
         <button
           key={it.value}
+          data-tab-value={it.value}
           role="tab"
+          type="button"
           aria-selected={value === it.value}
           className={cx('tabs__item', value === it.value && 'is-active')}
-          onClick={() => onChange(it.value)}
+          onClick={() => {
+            setHoverVal(null);
+            onChange(it.value);
+          }}
+          onMouseEnter={() => {
+            setHoverVal(it.value);
+            updateSlider(it.value, it.value !== value);
+          }}
         >
           {it.icon && <Icon name={it.icon} size={15} />}
-          {it.label}
+          <span>{it.label}</span>
           {it.count != null && <em>{it.count}</em>}
         </button>
       ))}

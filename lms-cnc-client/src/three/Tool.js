@@ -48,6 +48,18 @@ export function createTool() {
   saddle.rotation.z = slantAngle;
   toolpostGroup.add(saddle);
 
+  // Kolom alas eretan pejal (Carriage Apron & Support Base)
+  // Menopang pelana toolpost langsung ke bawah ranjang mesin agar tidak melayang
+  const carriageBase = box(1.4, 1.2, 1.4, COLORS.castIron, 0.55, 0.58);
+  const baseOffsetNorm = 0.72;
+  carriageBase.position.set(
+    0.3 * cosSlant + baseOffsetNorm * sinSlant,
+    0.3 * sinSlant - 0.45 - baseOffsetNorm * cosSlant,
+    -0.35
+  );
+  carriageBase.rotation.z = slantAngle;
+  toolpostGroup.add(carriageBase);
+
   // Pelat geser silang (Cross slide)
   const crossSlide = box(1.3, 0.28, 1.3, COLORS.darkSteel, 0.68, 0.38);
   crossSlide.position.set(0.1 * cosSlant, 0.1 * sinSlant - 0.18, -0.12);

@@ -52,7 +52,7 @@ export function mockApiPlugin() {
       level: 2,
       deskripsi: 'Meniruskan stock Ø40 L60 menjadi Ø20 sepanjang 40 mm.',
       target: { stock_d: 40, stock_l: 60, target_d: 20, target_z: 40 },
-      starter_gcode: 'G90\nG00 X40 Z0\nG01 X20 Z-40 F100\nG00 X50 Z5',
+      starter_gcode: 'G90\nG00 X40 Z0\nG01 X20 Z-40 F100\nG00 X50\nG00 Z5\nM30',
       lkpd_url: null
     },
     {
@@ -61,7 +61,7 @@ export function mockApiPlugin() {
       level: 3,
       deskripsi: 'Membuat 3 undakan: Ø40 → Ø30 → Ø20. Tarik pahat ke diameter aman sebelum memakai G00.',
       target: { stock_d: 50, stock_l: 60, target_d: 20, target_z: 55 },
-      starter_gcode: 'G90\nG00 X50 Z0\nG01 X40 Z0 F100\nG01 X40 Z-15 F100\nG00 X50 Z-15',
+      starter_gcode: 'G90\nG00 X50 Z0\nG01 X40 Z0 F100\nG01 X40 Z-15 F100\nG00 X50\nG00 Z5\nM30',
       lkpd_url: null
     },
     {
@@ -69,8 +69,8 @@ export function mockApiPlugin() {
       judul: 'Level 4: Radius G02/G03',
       level: 4,
       deskripsi: 'Membuat fillet radius 5 mm. Busur memakai I/K.',
-      target: { stock_d: 40, stock_l: 40, target_d: 30, target_z: 20 },
-      starter_gcode: 'G90\nG00 X40 Z0\nG01 X30 Z-15 F100\nG03 X20 Z-20 R5 F80\nG00 X50\nG00 Z5',
+      target: { stock_d: 40, stock_l: 60, target_d: 30, target_z: 20 },
+      starter_gcode: 'G90\nG00 X40 Z0\nG01 X30 Z-15 F100\nG03 X20 Z-20 R5 F80\nG00 X50\nG00 Z5\nM30',
       lkpd_url: null
     }
   ];

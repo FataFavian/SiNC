@@ -31,3 +31,5 @@ Thumbs.db
 .cache/
 .parcel-cache/
 .codegraph/
+.agents/
+demo-out/

@@ -206,12 +206,6 @@ export function createEnclosure({ stockL = 60 } = {}) {
     handle.position.set(0.09, 0.04, handleZ);
     door.add(handle);
 
-    if (i === 1) {
-      const sticker = part(0.018, 0.4, 0.65, 0xe0b23a, 0.15, 0.55);
-      sticker.position.set(0.048, 0.55, -doorW / 2 + 0.8);
-      door.add(sticker);
-    }
-
     g.add(door);
     doors.push(door);
   }

@@ -11,7 +11,6 @@ import { AXIS_HELP, VIEWS } from '../three/theme';
 import Icon from '../ui/Icon.jsx';
 
 const VIEW_LABEL = {
-  iso: 'Isometrik',
   depan: 'Depan',
   atas: 'Atas',
   pahat: 'Dekat Pahat',
@@ -37,30 +36,41 @@ export default function Simulator3D({
   const canvasRef = useRef(null);
   const apiRef = useRef(null);
   const [err, setErr] = useState('');
-  const [view, setView] = useState('iso');
+  const [view, setView] = useState('depan');
 
-  // buat scene sekali
+  // buat scene sekali dengan transisi sinematik zoom-out saat mulai
   useEffect(() => {
     let api;
     try {
-      api = createCncScene(canvasRef.current, { stockD, stockL, target, initialView: shot });
+      // Inisialisasi awal di posisi kontrol panel CNC agar dapat zoom-out sinematik ke tampak depan mesin
+      api = createCncScene(canvasRef.current, { stockD, stockL, target, initialView: 'panel' });
     } catch (e) {
       setErr(e?.message || 'WebGL tidak tersedia di perangkat ini.');
       onError?.(e);
       return;
     }
     apiRef.current = api;
+
+    // Saat tombol Jalankan ditekan (shot === 'machine'), jalankan zoom-out kamera ke tampak depan mesin
+    let zoomTimer = 0;
+    if (shot === 'machine') {
+      zoomTimer = setTimeout(() => {
+        api.setView('depan');
+      }, 50);
+    }
+
     return () => {
+      clearTimeout(zoomTimer);
       api.dispose();
       apiRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // saat mode berubah: panel = kamera dekat layar, machine = zoom out
+  // saat mode berubah: panel = kamera dekat layar, machine = zoom out ke tampak depan
   useEffect(() => {
-    const next = shot === 'panel' ? 'panel' : 'iso';
-    setView('iso');
+    const next = shot === 'panel' ? 'panel' : 'depan';
+    setView('depan');
     apiRef.current?.setView(next);
   }, [shot]);
 
@@ -145,7 +155,7 @@ export default function Simulator3D({
           {crashed && <div className="vp3d-alert"><Icon name="alert" size={14} /> TABRAKAN, siklus dihentikan</div>}
 
           <div className="vp3d-views">
-            {Object.keys(VIEWS).map((k) => (
+            {Object.keys(VIEW_LABEL).map((k) => (
               <button
                 key={k}
                 className={view === k ? 'active' : ''}

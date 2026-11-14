@@ -16,7 +16,7 @@ import { createTool } from './Tool';
 import { createToolpath } from './Toolpath';
 import { COLORS, MM } from './theme';
 
-export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initialView = 'iso' } = {}) {
+export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initialView = 'depan' } = {}) {
   const host = canvas.parentElement;
   const span = Math.max(2.5, stockL * MM);
   const camScale = Math.max(0.78, Math.min(1.25, 0.72 + span * 0.08));
@@ -40,6 +40,7 @@ export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initi
   const buildViews = (f) => ({
     iso: fitView({ pos: [18.0 * camScale, 10.5 * camScale, cz + 9.5 * camScale], target: [0, -0.6, cz] }, f),
     depan: fitView({ pos: [19.0 * camScale, 3.8 * camScale, cz + 0.5], target: [0, -0.6, cz] }, f),
+    depanDekat: fitView({ pos: [9.5 * camScale, 2.0 * camScale, cz + 0.5], target: [0, -0.6, cz] }, f),
     atas: fitView({ pos: [0.01, 19.5 * camScale, cz], target: [0, 0, cz] }, f),
     panel: controlPanel.getView(),
   });
@@ -64,7 +65,7 @@ export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initi
   scene.fog = new THREE.Fog(COLORS.bg, 55, 150);
 
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 220);
-  const startView = views[initialView] || views.iso;
+  const startView = views[initialView] || views.depan || views.iso;
   camera.position.set(...startView.pos);
 
   const controls = new OrbitControls(camera, canvas);
@@ -211,7 +212,7 @@ export function createCncScene(canvas, { stockD = 40, stockL = 60, target, initi
   let disposeObserver = null;
 
   function setView(name) {
-    let v = views[name] || views.iso;
+    let v = views[name] || views.depan || views.iso;
     if (name === 'pahat') {
       // kamera dekat mengikuti Z pahat, tetapi tetap di area benda kerja
       const tzRaw = tool.getZ();
