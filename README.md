@@ -365,6 +365,10 @@ Proyek ini didistribusikan secara terbuka di bawah naungan **[MIT License](LICEN
 2. **Pengembangan Berkelanjutan (Open Innovation)**: Membuka ruang bagi komunitas pengembang perangkat lunak dan akademisi untuk memperkaya fitur, memperluas modul pembelajaran G-Code, serta mengintegrasikan model mesin bubut lainnya secara kolaboratif.
 3. **Penerapan Nyata di Dunia Pendidikan**: Menghilangkan kesenjangan fasilitas fisik permesinan di sekolah sehingga seluruh siswa kejuruan dapat berlatih secara terampil, aman, dan percaya diri sebelum mengoperasikan mesin industri nyata.
 
+### Atribusi Aset & Musik Pengiring (Audio Attribution)
+- **Musik Latar Video Demo**: *Carefree* oleh Kevin MacLeod (incompetech.com).  
+  Dilisensikan di bawah *Creative Commons: By Attribution 3.0 License*.
+
 ---
 
 <p align="center">
