@@ -1,5 +1,5 @@
 // =============================================================
-// Coolant.js — semprotan cairan pendingin CNC bubut.
+// Coolant.js - semprotan cairan pendingin CNC bubut.
 // Nozzle terpasang di toolpost sehingga titik semprot bergerak
 // mengikuti pergerakan pahat dan toolpost secara dinamis.
 // =============================================================

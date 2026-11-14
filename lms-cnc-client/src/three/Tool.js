@@ -1,5 +1,5 @@
 // =============================================================
-// Tool.js — toolpost CNC bubut slant bed (miring diagonal).
+// Tool.js - toolpost CNC bubut slant bed (miring diagonal).
 // Kompak, proporsional, tidak menabrak chuck dan tidak keluar pintu.
 // Bergerak kaku bersama pada sumbu X (diagonal) & Z (aksial).
 // =============================================================

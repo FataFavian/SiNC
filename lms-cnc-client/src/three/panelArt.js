@@ -1,5 +1,5 @@
 // =============================================================
-// panelArt.js — lukisan layar kontrol GreaMaT 805Ta.
+// panelArt.js - lukisan layar kontrol GreaMaT 805Ta.
 // Dipakai dua kali: overlay 2D saat mengedit program dan tekstur
 // layar pada panel fisik di mesin 3D.
 // =============================================================

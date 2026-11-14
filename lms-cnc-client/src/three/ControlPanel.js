@@ -1,6 +1,6 @@
 // =============================================================
-// ControlPanel.js — panel kontrol fisik menempel di casing kiri mesin.
-// Referensi: GreMaT STH 6166 — layar + tombol tertanam di permukaan
+// ControlPanel.js - panel kontrol fisik menempel di casing kiri mesin.
+// Referensi: GreMaT STH 6166 - layar + tombol tertanam di permukaan
 // casing kiri headstock. Layar memakai CanvasTexture (panelArt.js).
 // =============================================================
 import * as THREE from 'three';
@@ -24,7 +24,7 @@ export function createControlPanel({ span = 6 } = {}) {
 
   // panel menempel langsung di permukaan casing kiri headstock
   const panelX = 3.74;    // flush dengan permukaan casing depan
-  const panelY = 1.15;    // sedikit di atas tengah — sejajar mata operator
+  const panelY = 1.15;    // sedikit di atas tengah - sejajar mata operator
   const panelZ = 6.55;    // Z sama dengan casing kiri headstock
 
   const head = new THREE.Group();

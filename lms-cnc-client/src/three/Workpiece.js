@@ -1,5 +1,5 @@
 // =============================================================
-// Workpiece.js — silinder benda kerja dari profile[] (radius per 0,5 mm).
+// Workpiece.js - silinder benda kerja dari profile[] (radius per 0,5 mm).
 // Vertex di-update inkremental: hanya ring yang berubah yang ditulis ulang,
 // jadi pemotongan bisa mengikuti pahat tiap frame tanpa rebuild geometry.
 // =============================================================

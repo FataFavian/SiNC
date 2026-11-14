@@ -1,5 +1,5 @@
 // =============================================================
-// Enclosure.js — bodi mesin putih + pintu kaca geser.
+// Enclosure.js - bodi mesin putih + pintu kaca geser.
 // Mengikuti mesin referensi: panel kontrol menempel di casing kiri,
 // pintu kaca di tengah, casing kanan berisi logo, dan base gelap.
 // =============================================================

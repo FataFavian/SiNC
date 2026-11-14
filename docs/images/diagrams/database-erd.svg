@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.06" />
+    </filter>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="860" fill="url(#bg-grad)" rx="16" />
+  <rect x="10" y="10" width="1180" height="840" fill="none" stroke="#e2e8f0" stroke-width="1.5" rx="14" />
+
+  <!-- Title Header -->
+  <rect x="40" y="24" width="1120" height="60" fill="#ffffff" rx="10" filter="url(#shadow)" stroke="#e2e8f0" />
+  <text x="60" y="52" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Entity Relationship Diagram (ERD) : Database Firestore SiNC</text>
+  <text x="60" y="72" font-family="system-ui, sans-serif" font-size="12.5" font-weight="400" fill="#64748b">Struktur Entitas NoSQL Dokumen Cloud Firestore: Pengguna, Rombel, Materi, Tugas, Percobaan G-Code, dan Program</text>
+
+  <!-- ENTITY 1: USERS -->
+  <g transform="translate(50, 110)">
+    <rect x="0" y="0" width="250" height="240" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 240 0 Q 250 0 250 10 L 250 36 L 0 36 Z" fill="#1e293b" />
+    <text x="125" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">users (Koleksi Pengguna)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID / UID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#334155">    email : string</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#334155">    nama : string</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#2563eb">    role : enum [admin,guru,siswa]</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#334155">    nis : string (khusus siswa)</text>
+    <text x="15" y="170" font-family="monospace" font-size="11.5" fill="#334155">    kelas : string (nama rombel)</text>
+    <text x="15" y="192" font-family="monospace" font-size="11.5" fill="#334155">    status : enum [aktif,nonaktif]</text>
+    <text x="15" y="214" font-family="monospace" font-size="11.5" fill="#64748b">    created_at : timestamp</text>
+  </g>
+
+  <!-- ENTITY 2: KELAS -->
+  <g transform="translate(360, 110)">
+    <rect x="0" y="0" width="250" height="220" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 240 0 Q 250 0 250 10 L 250 36 L 0 36 Z" fill="#0369a1" />
+    <text x="125" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">kelas (Rombongan Belajar)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#334155">    nama : string (mis. XII TPM 1)</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#16a34a">    kode : string (UNIQUE mis. K8X2)</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#9333ea">FK  guru_id : string (users.id)</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#334155">    tingkat : string (X / XI / XII)</text>
+    <text x="15" y="170" font-family="monospace" font-size="11.5" fill="#334155">    kompetensi : string (Teknik Mesin)</text>
+    <text x="15" y="192" font-family="monospace" font-size="11.5" fill="#64748b">    tahun_ajaran : string</text>
+  </g>
+
+  <!-- ENTITY 3: ANGGOTA_KELAS -->
+  <g transform="translate(50, 420)">
+    <rect x="0" y="0" width="250" height="170" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 240 0 Q 250 0 250 10 L 250 36 L 0 36 Z" fill="#475569" />
+    <text x="125" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">anggota_kelas (Keanggotaan)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#9333ea">FK  kelas_id : string (kelas.id)</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#9333ea">FK  user_id : string (users.id)</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#334155">    nis : string</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#64748b">    gabung_pada : timestamp</text>
+  </g>
+
+  <!-- ENTITY 4: MATERI -->
+  <g transform="translate(360, 420)">
+    <rect x="0" y="0" width="250" height="190" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 240 0 Q 250 0 250 10 L 250 36 L 0 36 Z" fill="#059669" />
+    <text x="125" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">materi (Bahan Ajar CNC)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#9333ea">FK  kelas_id : string (kelas.id)</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#9333ea">FK  guru_id : string (users.id)</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#334155">    judul : string</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#334155">    konten : text</text>
+    <text x="15" y="170" font-family="monospace" font-size="11.5" fill="#ea580c">    file_url : string (Storage)</text>
+  </g>
+
+  <!-- ENTITY 5: TUGAS -->
+  <g transform="translate(670, 110)">
+    <rect x="0" y="0" width="260" height="250" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 250 0 Q 260 0 260 10 L 260 36 L 0 36 Z" fill="#d97706" />
+    <text x="130" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">tugas (Jobsheet &amp; Praktik)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#9333ea">FK  kelas_id : string (kelas.id)</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#9333ea">FK  guru_id : string (users.id)</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#334155">    judul : string</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#334155">    stock_d, stock_l : number</text>
+    <text x="15" y="170" font-family="monospace" font-size="11.5" fill="#047857">    target_profil : json-array</text>
+    <text x="15" y="192" font-family="monospace" font-size="11.5" fill="#334155">    poin : number (mis. 100)</text>
+    <text x="15" y="214" font-family="monospace" font-size="11.5" fill="#ea580c">    lkpd_url : string (Storage)</text>
+    <text x="15" y="234" font-family="monospace" font-size="11.5" fill="#64748b">    batas_waktu : timestamp</text>
+  </g>
+
+  <!-- ENTITY 6: PERCOBAAN (ATTEMPTS) -->
+  <g transform="translate(670, 420)">
+    <rect x="0" y="0" width="260" height="220" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 250 0 Q 260 0 260 10 L 260 36 L 0 36 Z" fill="#7c3aed" />
+    <text x="130" y="24" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">percobaan (Hasil Simulasi)</text>
+    <text x="15" y="60" font-family="monospace" font-size="11.5" fill="#dc2626">PK  id : string (UUID)</text>
+    <text x="15" y="82" font-family="monospace" font-size="11.5" fill="#9333ea">FK  tugas_id : string (tugas.id)</text>
+    <text x="15" y="104" font-family="monospace" font-size="11.5" fill="#9333ea">FK  user_id : string (users.id)</text>
+    <text x="15" y="126" font-family="monospace" font-size="11.5" fill="#334155">    gcode_input : text</text>
+    <text x="15" y="148" font-family="monospace" font-size="11.5" fill="#16a34a">    skor : number (0 - 100)</text>
+    <text x="15" y="170" font-family="monospace" font-size="11.5" fill="#334155">    lolos : boolean</text>
+    <text x="15" y="192" font-family="monospace" font-size="11.5" fill="#64748b">    detail_evaluasi : string</text>
+  </g>
+
+  <!-- ENTITY 7: PROGRAM_TERSIMPAN -->
+  <g transform="translate(980, 260)">
+    <rect x="0" y="0" width="180" height="240" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <path d="M 0 10 Q 0 0 10 0 L 170 0 Q 180 0 180 10 L 180 36 L 0 36 Z" fill="#475569" />
+    <text x="90" y="24" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">program_tersimpan</text>
+    <text x="12" y="60" font-family="monospace" font-size="11" fill="#dc2626">PK id : string</text>
+    <text x="12" y="82" font-family="monospace" font-size="11" fill="#9333ea">FK user_id</text>
+    <text x="12" y="104" font-family="monospace" font-size="11" fill="#334155">   judul : str</text>
+    <text x="12" y="126" font-family="monospace" font-size="11" fill="#334155">   gcode : text</text>
+    <text x="12" y="148" font-family="monospace" font-size="11" fill="#334155">   stock_d : num</text>
+    <text x="12" y="170" font-family="monospace" font-size="11" fill="#334155">   stock_l : num</text>
+    <text x="12" y="192" font-family="monospace" font-size="11" fill="#334155">   target_d: num</text>
+    <text x="12" y="214" font-family="monospace" font-size="11" fill="#64748b">   updated_at</text>
+  </g>
+
+  <!-- Legend & Notation -->
+  <g transform="translate(50, 720)">
+    <rect x="0" y="0" width="1110" height="90" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)" />
+    <text x="20" y="28" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f172a">Keterangan Relasi Antar Dokumen (Cardinality):</text>
+    <text x="20" y="54" font-family="system-ui, sans-serif" font-size="12" fill="#334155">1. users (1) --&gt; (N) kelas (Satu guru mengampu banyak rombel / kelas).</text>
+    <text x="20" y="74" font-family="system-ui, sans-serif" font-size="12" fill="#334155">2. kelas (1) --&gt; (N) anggota_kelas &lt;-- (1) users (Relasi many-to-many siswa terdaftar di rombel).</text>
+    <text x="540" y="54" font-family="system-ui, sans-serif" font-size="12" fill="#334155">3. kelas (1) --&gt; (N) tugas &amp; materi (Tugas &amp; materi terikat pada rombel spesifik).</text>
+    <text x="540" y="74" font-family="system-ui, sans-serif" font-size="12" fill="#334155">4. tugas (1) --&gt; (N) percobaan (Satu tugas dapat memiliki banyak riwayat percobaan simulasi siswa).</text>
+  </g>
+
+  <!-- Relationship Connectors (Crow's foot / lines) -->
+  <!-- Users -> Kelas (1:N) -->
+  <path d="M 300 170 L 360 170" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="322" y="163" font-family="monospace" font-size="11" font-weight="700" fill="#2563eb">1:N</text>
+
+  <!-- Users -> Anggota (1:N) -->
+  <path d="M 125 350 L 125 420" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="132" y="390" font-family="monospace" font-size="11" font-weight="700" fill="#2563eb">1:N</text>
+
+  <!-- Kelas -> Anggota (1:N) -->
+  <path d="M 360 270 L 250 420" stroke="#0369a1" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="285" y="335" font-family="monospace" font-size="11" font-weight="700" fill="#0369a1">1:N</text>
+
+  <!-- Kelas -> Materi (1:N) -->
+  <path d="M 485 330 L 485 420" stroke="#0369a1" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="495" y="380" font-family="monospace" font-size="11" font-weight="700" fill="#0369a1">1:N</text>
+
+  <!-- Kelas -> Tugas (1:N) -->
+  <path d="M 610 170 L 670 170" stroke="#0369a1" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="630" y="163" font-family="monospace" font-size="11" font-weight="700" fill="#0369a1">1:N</text>
+
+  <!-- Tugas -> Percobaan (1:N) -->
+  <path d="M 800 360 L 800 420" stroke="#d97706" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="810" y="395" font-family="monospace" font-size="11" font-weight="700" fill="#d97706">1:N</text>
+
+  <!-- Users -> Program Tersimpan (1:N) -->
+  <path d="M 300 220 L 330 220 L 330 90 L 1070 90 L 1070 260" stroke="#475569" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arrow)" />
+
+</svg>

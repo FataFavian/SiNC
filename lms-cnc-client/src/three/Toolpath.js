@@ -1,5 +1,5 @@
 // =============================================================
-// Toolpath.js — garis lintasan pahat 3D.
+// Toolpath.js - garis lintasan pahat 3D.
 // Hijau = G01/G02/G03 (feeding), oranye putus-putus = G00 (rapid).
 // Garis "preview" (semua langkah) dibuat redup; garis "traveled"
 // menyala mengikuti langkah yang sudah dijalankan.
