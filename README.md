@@ -18,11 +18,12 @@
 Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** yang menggabungkan kelas virtual, simulator mesin bubut CNC 3D interaktif, dan asisten cerdas **Google Gemini AI**.
 
 🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)  
-🎬 **Video Demonstrasi Fitur (Walkthrough):** [docs/demo-sinc.mp4](docs/demo-sinc.mp4)
+🎬 **Video Demonstrasi Penuh (2.5 Menit):** [Putar di GitHub Video Player](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4) | [Unduh Berkas MP4](https://github.com/FataFavian/SiNC/releases/download/v1.0.0/demo-sinc.mp4)
 
-<video src="docs/demo-sinc.mp4" controls="controls" width="100%" style="max-width: 100%; border-radius: 8px;">
-  <p>Browser Anda tidak mendukung tag video HTML5. Silakan tonton atau unduh video demonstrasi melalui tautan berkas: <a href="docs/demo-sinc.mp4"><strong>docs/demo-sinc.mp4</strong></a>.</p>
-</video>
+[![Cuplikan Video Demonstrasi SiNC](docs/demo-preview.gif)](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4)
+
+> ▶️ **[Klik gambar di atas atau klik di sini untuk memutar Video Demonstrasi Fitur Lengkap di GitHub Video Player](https://github.com/FataFavian/SiNC/blob/main/docs/demo-sinc.mp4)**  
+> *Rekaman video memperlihatkan login akun siswa, eksplorasi materi, pemotongan 3D interaktif, inspeksi putar 360 derajat, alarm tabrakan chuck, dan pendampingan AI CNC-Bot.*
 
 ![Panel kontrol simulator saat menyusun program](docs/simulator-panel.png)
 
