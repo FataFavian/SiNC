@@ -18,7 +18,7 @@
 Learning Management System (LMS) G-Code untuk SMK berbasis **Full Serverless** yang menggabungkan kelas virtual, simulator mesin bubut CNC 3D interaktif, dan asisten cerdas **Google Gemini AI**.
 
 🌐 **Demo Live Web:** [https://fatafavian.github.io/SiNC/](https://fatafavian.github.io/SiNC/)  
-🎬 **Video Demonstrasi Penuh:** [Tonton Langsung Video Demonstrasi MP4](https://fatafavian.github.io/SiNC/docs/demo-sinc.mp4)
+🎬 **Video Demonstrasi Penuh:** [[Tonton Langsung Video Demonstrasi MP4]](https://youtu.be/KE6qK7zjRFw?si=uJ-KvhQz1TyW-f6m)
 
 [![Cuplikan Video Demonstrasi SiNC](docs/demo-preview.gif)](https://fatafavian.github.io/SiNC/docs/demo-sinc.mp4)
 
